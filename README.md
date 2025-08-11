@@ -18,4 +18,8 @@ Local-first personal Kanban and notes app. This repository contains planning doc
 - Editor: Tiptap or Slate
 - State: Zustand or Redux Toolkit
 
+## Development tools
+- `scripts/create-pr.ps1` - PowerShell script for creating GitHub PRs efficiently
+- See `scripts/README.md` for usage and examples
+
 See docs/Roadmap.md for milestones and next actions.
