@@ -1,0 +1,16 @@
+# OS/editor
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+# Dependencies
+node_modules/
+coverage/
+dist/
+build/
+# Python
+__pycache__/
+*.pyc
+# Env
+.env
+.env.*
