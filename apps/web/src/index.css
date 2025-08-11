@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+}
+
+@layer utilities {
+  .container-app {
+    @apply mx-auto max-w-screen-2xl px-4;
+  }
+}
