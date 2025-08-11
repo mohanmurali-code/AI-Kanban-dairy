@@ -51,29 +51,32 @@ function Kanban() {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Kanban</h2>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold tracking-tight">All Issues</h2>
+        <button className="ui-btn">+ New Issue</button>
+      </div>
       <DndContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-          {columns.map(({ key, name }) => (
-            <div key={key} className="rounded-md border p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <div className="text-sm font-medium opacity-80">{name}</div>
-                <div className="text-xs opacity-60">{columnOrder[key]?.length ?? 0}</div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {columns.filter(c => ['draft','in_progress','completed'].includes(c.key)).map(({ key, name }) => (
+            <div key={key} className="ui-panel border p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="text-sm font-medium opacity-90">{name}</div>
+                <div className="ui-count">{columnOrder[key]?.length ?? 0}</div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {(columnOrder[key] ?? []).map((taskId) => {
                   const t = tasks[taskId]
                   return (
-                    <div key={taskId} className="rounded-md border p-2 text-sm">
+                    <div key={taskId} className="ui-card border p-3 text-sm">
                       {t.title}
                     </div>
                   )
                 })}
               </div>
-              <div className="mt-3 flex gap-2">
+              <div className="mt-4 flex gap-2">
                 <input
-                  className="w-full rounded-md border bg-transparent p-2 text-sm"
+                  className="ui-input"
                   placeholder="Quick add"
                   value={draftInput[key]}
                   onChange={(e) => setDraftInput((s) => ({ ...s, [key]: e.target.value }))}
@@ -81,7 +84,7 @@ function Kanban() {
                     if (e.key === 'Enter') onAdd(key)
                   }}
                 />
-                <button className="rounded-md border px-3 py-2 text-sm" onClick={() => onAdd(key)}>
+                <button className="ui-btn" onClick={() => onAdd(key)}>
                   Add
                 </button>
               </div>

@@ -62,3 +62,19 @@ git commit -m "feat: add new component"
 - **"Not authenticated"**: Run `gh auth login` first
 - **"GitHub CLI not installed"**: Install from https://cli.github.com/
 - **"Not in git repository"**: Run from project root directory
+
+## pr.js (cross-platform, restart-safe)
+
+Node-based PR helper that caches your last-used settings and works across Windows/macOS/Linux without changing PowerShell execution policies.
+
+### Usage
+
+```bash
+node scripts/pr.js --branch chore/docs-automation --title "docs: automate" --body "..." --base main --draft
+```
+
+### Features
+- Caches last branch, base, and title in `.prconfig.json` at repo root
+- Resumes safely after restarts
+- Runs: branch create/switch, stage changed files, commit (single message), push, and `gh pr create`
+- Non-interactive mode for CI; minimal flags required
