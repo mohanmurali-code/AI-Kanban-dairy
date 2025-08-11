@@ -1,3 +1,8 @@
+/**
+ * Settings page.
+ *
+ * Placeholder for application preferences such as data folder selection.
+ */
 function Settings() {
   return (
     <div className="space-y-4">

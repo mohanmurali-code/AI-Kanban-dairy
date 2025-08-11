@@ -1,3 +1,8 @@
+/**
+ * Tasks page.
+ *
+ * Displays a tabular view of tasks. Will later be connected to the store.
+ */
 function Tasks() {
   return (
     <div className="space-y-4">

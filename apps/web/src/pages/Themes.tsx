@@ -1,3 +1,8 @@
+/**
+ * Themes page.
+ *
+ * Simple theme selection controls. Actual theming logic to be added.
+ */
 function Themes() {
   return (
     <div className="space-y-4">

@@ -3,11 +3,72 @@
 @layer base {
   :root {
     color-scheme: light dark;
+    /* Dark navy inspiration tokens (RGB triplets for Tailwind arbitrary colors) */
+    --bg: 14 34 48;            /* app background */
+    --surface: 20 44 60;       /* panels */
+    --surface-2: 26 54 73;     /* cards / inputs */
+    --border: 38 66 84;        /* soft border */
+    --fg: 225 232 238;         /* foreground text */
+    --fg-muted: 159 174 186;   /* secondary text */
+    --primary: 99 179 237;     /* accent (cyan-ish) */
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+  }
+
+  html, body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
   }
 }
 
 @layer utilities {
   .container-app {
     @apply mx-auto max-w-screen-2xl px-4;
+  }
+}
+
+@layer components {
+  .ui-panel {
+    border-color: rgb(var(--border));
+    background-color: rgb(var(--surface));
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(0,0,0,0.25) inset,
+      0 6px 24px rgba(0,0,0,0.25);
+  }
+
+  .ui-card {
+    border-color: rgb(var(--border));
+    background-color: rgb(var(--surface-2));
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(0,0,0,0.25) inset,
+      0 8px 20px rgba(0,0,0,0.25);
+  }
+
+  .ui-input {
+    @apply w-full text-sm px-3 py-2 border outline-none;
+    border-color: rgb(var(--border));
+    background-color: rgb(var(--surface-2));
+    color: rgb(var(--fg));
+    border-radius: var(--radius-md);
+  }
+
+  .ui-btn {
+    @apply inline-flex items-center justify-center text-sm font-medium px-3 py-2 border transition-colors;
+    border-color: rgb(var(--border));
+    background-color: rgb(var(--surface-2));
+    color: rgb(var(--fg));
+    border-radius: var(--radius-md);
+  }
+
+  .ui-btn:hover { background-color: rgb(var(--surface)); }
+
+  .ui-count {
+    @apply inline-flex items-center justify-center text-xs font-medium;
+    height: 20px; min-width: 20px; padding: 0 6px;
+    color: rgb(var(--fg));
+    background-color: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 9999px;
   }
 }

@@ -1,5 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
+/**
+ * Root application layout.
+ *
+ * Renders the top navigation and an `Outlet` for child routes.
+ * Styling is kept minimal and relies on utility classes.
+ */
+
 function App() {
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
