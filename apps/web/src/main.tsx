@@ -4,12 +4,21 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 
+/**
+ * Application entry point.
+ *
+ * - Configures client-side routing using `react-router-dom`.
+ * - Lazily loads route components to keep the initial bundle small.
+ * - Mounts the app into the `#root` element.
+ */
+
 const Kanban = React.lazy(() => import('./pages/Kanban'))
 const Notes = React.lazy(() => import('./pages/Notes'))
 const Tasks = React.lazy(() => import('./pages/Tasks'))
 const Themes = React.lazy(() => import('./pages/Themes'))
 const Settings = React.lazy(() => import('./pages/Settings'))
 
+/** Router definition and route hierarchy. */
 const router = createBrowserRouter([
   {
     path: '/',

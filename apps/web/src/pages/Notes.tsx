@@ -1,3 +1,8 @@
+/**
+ * Notes page.
+ *
+ * Provides a simple, resizable textarea for free-form note taking.
+ */
 function Notes() {
   return (
     <div className="space-y-4">

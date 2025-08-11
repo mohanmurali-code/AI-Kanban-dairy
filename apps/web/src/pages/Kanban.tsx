@@ -3,6 +3,10 @@ import { useState } from 'react'
 import { useTaskStore } from '../store/tasks'
 import type { ColumnKey } from '../types'
 
+/**
+ * Column definitions for the Kanban board.
+ * The `key` maps to the `ColumnKey` used in the task store.
+ */
 const columns: { key: ColumnKey; name: string }[] = [
   { key: 'draft', name: 'Draft' },
   { key: 'refined', name: 'Refined' },
@@ -11,8 +15,15 @@ const columns: { key: ColumnKey; name: string }[] = [
   { key: 'completed', name: 'Completed' },
 ]
 
+/**
+ * Kanban board page.
+ *
+ * Displays task columns, quick-add inputs per column, and sets up a drag-and-drop
+ * context. Drag-and-drop behavior will be implemented in a later iteration.
+ */
 function Kanban() {
   const { tasks, columnOrder, createTask } = useTaskStore()
+  /** Local input state for quick task creation per column. */
   const [draftInput, setDraftInput] = useState<Record<ColumnKey, string>>({
     draft: '',
     refined: '',
@@ -21,6 +32,9 @@ function Kanban() {
     completed: '',
   })
 
+  /**
+   * Create a new task in the given column if the input has a non-empty title.
+   */
   const onAdd = (status: ColumnKey) => {
     const title = draftInput[status].trim()
     if (!title) return
@@ -28,6 +42,10 @@ function Kanban() {
     setDraftInput((s) => ({ ...s, [status]: '' }))
   }
 
+  /**
+   * Placeholder for handling drag end events.
+   * Will be wired to move tasks within/between columns.
+   */
   const onDragEnd = (_e: DragEndEvent) => {
     // Wire full DnD later
   }
