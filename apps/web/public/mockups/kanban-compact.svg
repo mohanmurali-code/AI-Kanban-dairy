@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <style>
+      .bg{fill:#0b0c0f}
+      .col{fill:#101216;stroke:#1b1f2a}
+      .hdr{fill:#1a1f2a}
+      .text{fill:#e6e9ef;font:600 12px ui-sans-serif,system-ui}
+      .card{fill:#0b0c0f;stroke:#1b1f2a}
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="720"/>
+  <g transform="translate(24,24)">
+    <!-- Compact columns with many small cards -->
+    <g>
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="40" rx="10"/>
+      <text class="text" x="12" y="24">Draft</text>
+      <g transform="translate(12,52)">
+        <!-- Stack of compact cards -->
+        <g>
+          <rect class="card" x="0" y="0" width="196" height="36" rx="6"/>
+          <text class="text" x="10" y="22">Write docs</text>
+        </g>
+        <g transform="translate(0,40)">
+          <rect class="card" x="0" y="0" width="196" height="36" rx="6"/>
+          <text class="text" x="10" y="22">Refactor store</text>
+        </g>
+        <g transform="translate(0,80)">
+          <rect class="card" x="0" y="0" width="196" height="36" rx="6"/>
+          <text class="text" x="10" y="22">Polish UI</text>
+        </g>
+      </g>
+    </g>
+    <!-- others omitted -->
+  </g>
+</svg>
+
+

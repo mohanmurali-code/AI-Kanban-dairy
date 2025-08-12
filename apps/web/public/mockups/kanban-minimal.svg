@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <style>
+      .bg{fill:#0b0c0f}
+      .col{fill:#11131a;stroke:#1b1f2a}
+      .hdr{fill:#0f172a}
+      .text{fill:#e6e9ef;font:600 14px ui-sans-serif,system-ui}
+      .muted{fill:#9aa3b2;font:500 12px ui-sans-serif,system-ui}
+      .card{fill:#0b0c0f;stroke:#1b1f2a}
+      .chip{fill:#1e293b;stroke:#24324a}
+      .count{fill:#0b0c0f;stroke:#233144}
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="720"/>
+  <!-- columns -->
+  <g transform="translate(24,24)">
+    <!-- repeat 5 columns -->
+    <g transform="translate(0,0)">
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="10"/>
+      <text class="text" x="14" y="30">Draft</text>
+      <rect class="count" x="170" y="14" width="36" height="20" rx="10"/>
+      <text class="muted" x="186" y="28" text-anchor="middle">3</text>
+      <!-- cards -->
+      <g transform="translate(12,64)">
+        <rect class="card" x="0" y="0" width="196" height="54" rx="8"/>
+        <text class="text" x="12" y="24">Write PRD outline</text>
+        <g>
+          <rect class="chip" x="12" y="30" width="52" height="18" rx="9"/>
+          <text class="muted" x="38" y="43" text-anchor="middle">High</text>
+        </g>
+      </g>
+      <g transform="translate(12,128)">
+        <rect class="card" x="0" y="0" width="196" height="54" rx="8"/>
+        <text class="text" x="12" y="24">Design card layout</text>
+        <g>
+          <rect class="chip" x="12" y="30" width="64" height="18" rx="9"/>
+          <text class="muted" x="44" y="43" text-anchor="middle">Medium</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(236,0)">
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="10"/>
+      <text class="text" x="14" y="30">Refined</text>
+      <rect class="count" x="170" y="14" width="36" height="20" rx="10"/>
+      <text class="muted" x="186" y="28" text-anchor="middle">4</text>
+      <g transform="translate(12,64)">
+        <rect class="card" x="0" y="0" width="196" height="54" rx="8"/>
+        <text class="text" x="12" y="24">Spec DnD behavior</text>
+        <g>
+          <rect class="chip" x="12" y="30" width="44" height="18" rx="9"/>
+          <text class="muted" x="34" y="43" text-anchor="middle">Low</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(472,0)">
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="10"/>
+      <text class="text" x="14" y="30">In Progress</text>
+      <rect class="count" x="170" y="14" width="36" height="20" rx="10"/>
+      <text class="muted" x="186" y="28" text-anchor="middle">2</text>
+      <g transform="translate(12,64)">
+        <rect class="card" x="0" y="0" width="196" height="54" rx="8"/>
+        <text class="text" x="12" y="24">Implement TaskCard</text>
+        <g>
+          <rect class="chip" x="12" y="30" width="64" height="18" rx="9"/>
+          <text class="muted" x="44" y="43" text-anchor="middle">Medium</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(708,0)">
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="10"/>
+      <text class="text" x="14" y="30">Blocked</text>
+      <rect class="count" x="170" y="14" width="36" height="20" rx="10"/>
+      <text class="muted" x="186" y="28" text-anchor="middle">1</text>
+    </g>
+
+    <g transform="translate(944,0)">
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="10"/>
+      <text class="text" x="14" y="30">Completed</text>
+      <rect class="count" x="170" y="14" width="36" height="20" rx="10"/>
+      <text class="muted" x="186" y="28" text-anchor="middle">8</text>
+    </g>
+  </g>
+</svg>
+
+
