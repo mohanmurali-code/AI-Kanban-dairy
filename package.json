@@ -1,0 +1,14 @@
+{
+  "name": "ai-kanban-diary",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev:web": "npm --prefix apps/web run dev",
+    "build:web": "npm --prefix apps/web run build",
+    "preview:web": "npm --prefix apps/web run preview",
+    "lint:web": "npm --prefix apps/web run lint"
+  }
+}
+
+
+

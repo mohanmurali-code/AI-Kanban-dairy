@@ -43,8 +43,8 @@ Testable criteria for validating that all requirements have been met. These crit
 
 **Acceptance Criteria:**
 1. **Task Creation**
-   - [ ] Quick add button creates task in selected column
-   - [ ] Task creation modal opens with all required fields
+   - [ ] Quick Add creates task in selected column
+   - [ ] Task Creation Modal opens with Title focused and Status preselected by column
    - [ ] Required fields (title, status) are enforced
    - [ ] Optional fields (description, priority, due date) are properly handled
    - [ ] Task is saved within 1 second of creation
@@ -57,7 +57,8 @@ Testable criteria for validating that all requirements have been met. These crit
    - [ ] Task descriptions are truncated with expand option
 
 3. **Task Editing**
-   - [ ] Inline editing works for title, priority, and due date
+   - [ ] Inline editing works for title, priority, due date, and tags
+   - [ ] Autosave occurs within 1 second with optimistic UI
    - [ ] Full editing modal opens for comprehensive changes
    - [ ] All changes are saved automatically
    - [ ] Edit history is maintained for audit purposes
@@ -74,6 +75,56 @@ Testable criteria for validating that all requirements have been met. These crit
 - Delete tasks and verify trash functionality
 - Verify all task metadata displays correctly
 - Test field validation and error handling
+
+---
+### AC-022: Inline Card Editing Validation
+**Related Requirements:** FR-019, NFR-001, UR-008
+
+**Acceptance Criteria:**
+1. **Editable Fields and Controls**
+   - [ ] Title, priority, due date, and tags editable inline
+   - [ ] Enter to save, Esc to cancel, Tab/Shift+Tab to navigate
+   - [ ] Keyboard-only flow supports entering and exiting edit mode
+
+2. **Autosave and Validation**
+   - [ ] Changes autosave within 1 second with visible status
+   - [ ] Empty titles are rejected with inline error
+   - [ ] Invalid dates are rejected with accessible error messaging
+   - [ ] Undo reverts the last inline change
+
+3. **Consistency**
+   - [ ] Edits reflect immediately on board and task list views
+   - [ ] Errors roll back optimistic updates
+
+**Test Scenarios:**
+- Edit each field inline via mouse and keyboard
+- Trigger validation errors and confirm announcements
+- Undo after edits and verify restoration
+
+---
+
+### AC-023: Task Creation Modal Validation
+**Related Requirements:** FR-020, NFR-001, UR-004
+
+**Acceptance Criteria:**
+1. **Modal Behavior**
+   - [ ] Opens from Quick Add, global shortcut, and empty state
+   - [ ] Focus trap with Esc to close, Enter to submit
+   - [ ] Title focused by default; status preselected from column
+
+2. **Submission**
+   - [ ] Valid submit creates task within 1 second at top of column
+   - [ ] Create-and-add-another resets fields appropriately
+   - [ ] Invalid inputs show inline errors and prevent submission
+
+3. **Accessibility**
+   - [ ] Proper labels and descriptions for inputs
+   - [ ] Keyboard navigation order is logical
+   - [ ] Screen reader announces modal opening and errors
+
+**Test Scenarios:**
+- Open from all launch points; test focus and keyboard
+- Submit valid/invalid forms; test create-and-add-another
 
 ---
 
@@ -153,6 +204,140 @@ Testable criteria for validating that all requirements have been met. These crit
 - Save and restore filter combinations
 - Export filtered data to CSV
 - Verify search and filter performance
+
+---
+
+### AC-016: Column Policies and WIP Enforcement
+**Related Requirements:** FR-001, FR-013, NFR-001
+
+**Acceptance Criteria:**
+1. **WIP Modes**
+   - [ ] Soft WIP shows warning without blocking
+   - [ ] Hard WIP blocks adding/moving tasks into the column
+   - [ ] Over-limit state announces to assistive tech
+   - [ ] WIP settings persist across restarts
+
+2. **Per-Column Sorting**
+   - [ ] Users can choose manual, priority, or due date sort per column
+   - [ ] Sort choice persists and updates order within 200ms
+   - [ ] Manual sort is preserved when returning from other modes
+
+3. **Presentation**
+   - [ ] Column color and description appear in header
+   - [ ] Virtualization activates beyond configured visible limit
+
+**Test Scenarios:**
+- Toggle soft/hard WIP and attempt moves
+- Switch sort modes; verify persistence and performance
+- Validate header presentation and virtualization
+
+---
+
+### AC-017: Card Presentation and Customization
+**Related Requirements:** FR-014, FR-002, UR-011
+
+**Acceptance Criteria:**
+1. **Field Visibility**
+   - [ ] Toggling description/due/priority/tags updates all cards
+   - [ ] Preference persists across sessions
+
+2. **Density and Badges**
+   - [ ] Density setting changes layout instantly
+   - [ ] Overdue and checklist badges reflect real-time state
+
+3. **Quick Actions and Keyboard**
+   - [ ] Hover actions provide edit/move/priority/tag
+   - [ ] Keyboard shortcut opens quick edit and supports move within column
+
+**Test Scenarios:**
+- Change visibility and density; verify persistence
+- Observe badges while editing due dates/checklists
+- Use quick actions via mouse and keyboard
+
+---
+
+### AC-018: Task Checklists (Subtasks)
+**Related Requirements:** FR-015, DR-004
+
+**Acceptance Criteria:**
+1. **Checklist CRUD**
+   - [ ] Add, edit, reorder, and complete items
+   - [ ] Changes autosave and are undoable
+
+2. **Conversion to Task**
+   - [ ] Convert item creates a linked task preserving text
+   - [ ] Link allows navigation between parent and new task
+
+3. **Performance and Limits**
+   - [ ] Up to 200 items supported per task
+   - [ ] Checklist interactions remain responsive (<100ms)
+
+**Test Scenarios:**
+- Create complex checklists, reorder, and convert items
+- Undo operations and verify state restoration
+
+---
+
+### AC-019: Bulk Operations on Board
+**Related Requirements:** FR-016, NFR-001
+
+**Acceptance Criteria:**
+1. **Selection and Bulk Edit**
+   - [ ] Multi-select up to 100 tasks across columns
+   - [ ] Bulk edit status/priority/due/tags applies correctly
+
+2. **Bulk Move and Safety**
+   - [ ] Bulk move respects WIP and ordering
+   - [ ] Destructive actions require confirmation
+   - [ ] Undo reverts operations fully within 5 seconds
+
+3. **Performance**
+   - [ ] Bulk operations complete within 500ms for 100 tasks
+
+**Test Scenarios:**
+- Apply bulk edits and moves; test undo and confirmations
+
+---
+
+### AC-020: Board Templates and Presets
+**Related Requirements:** FR-017, DR-006
+
+**Acceptance Criteria:**
+1. **Built-in Presets**
+   - [ ] Users can apply Simple, Default, and GTD presets
+   - [ ] Presets set columns, colors, WIP, and sorts
+
+2. **Custom Presets**
+   - [ ] Save current configuration as a custom preset
+   - [ ] Custom presets persist and can be renamed/deleted
+
+3. **Export/Import and Reset**
+   - [ ] Export board config to JSON and reimport successfully
+   - [ ] Reset restores default board
+
+**Test Scenarios:**
+- Apply, save, export/import, and reset presets
+
+---
+
+### AC-021: Archiving and Activity History
+**Related Requirements:** FR-018, DR-012
+
+**Acceptance Criteria:**
+1. **Archiving**
+   - [ ] Archive completed tasks and optional columns
+   - [ ] Archived items hidden from active view by default
+
+2. **Activity Log**
+   - [ ] Moves, edits, and status changes are recorded with timestamp
+   - [ ] Activity is viewable per task
+
+3. **Restore and Retention**
+   - [ ] Restore returns items to original state when possible
+   - [ ] Retention policy removes archived items per configuration
+
+**Test Scenarios:**
+- Archive/restore tasks and columns; review activity log; verify retention
 
 ---
 

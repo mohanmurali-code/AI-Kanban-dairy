@@ -1,0 +1,20 @@
+* [32mchore/docs-automation                     [m 46d6208 [[34morigin/chore/docs-automation[m] docs: enforce TSDoc/JSDoc, add TypeDoc, and pre-commit lint hook
+  docs-foundation                           [m 716555f [[34morigin/docs-foundation[m] docs: add PRD, roadmap, requirements, UI design, versioning, PR guidelines, folder structure; add PR template and README links
+  docs/requirements-structure               [m c48b83a [[34morigin/docs/requirements-structure[m] docs(requirements): introduce structured requirements folder and acceptance criteria; add PR helper scripts
+  feat/kanban-dnd-inline-edit               [m f84a171 [[34morigin/feat/kanban-dnd-inline-edit[m] Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  feat/m1-frontend-skeleton                 [m ca2c815 [[34morigin/feat/m1-frontend-skeleton[m] feat(web): scaffold Vite React TS app with Tailwind v4, routing, pages, and Zustand store
+  feat/notes-autosave                       [m f84a171 [[34morigin/feat/notes-autosave[m] Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  feat/settings-import-export               [m f84a171 [[34morigin/feat/settings-import-export[m] Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  feat/tasks-table                          [m f84a171 [[34morigin/feat/tasks-table[m] Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  feat/ui-theme-store                       [m f84a171 [[34morigin/feat/ui-theme-store[m] Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  main                                      [m 9b432c8 [[34morigin/main[m: behind 8] chore: update
+  [31mremotes/origin/chore/docs-automation      [m 46d6208 docs: enforce TSDoc/JSDoc, add TypeDoc, and pre-commit lint hook
+  [31mremotes/origin/docs-foundation            [m 716555f docs: add PRD, roadmap, requirements, UI design, versioning, PR guidelines, folder structure; add PR template and README links
+  [31mremotes/origin/docs/requirements-structure[m c48b83a docs(requirements): introduce structured requirements folder and acceptance criteria; add PR helper scripts
+  [31mremotes/origin/feat/kanban-dnd-inline-edit[m f84a171 Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  [31mremotes/origin/feat/m1-frontend-skeleton  [m ca2c815 feat(web): scaffold Vite React TS app with Tailwind v4, routing, pages, and Zustand store
+  [31mremotes/origin/feat/notes-autosave        [m f84a171 Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  [31mremotes/origin/feat/settings-import-export[m f84a171 Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  [31mremotes/origin/feat/tasks-table           [m f84a171 Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  [31mremotes/origin/feat/ui-theme-store        [m f84a171 Merge pull request #4 from mohanmurali-code/chore/docs-automation
+  [31mremotes/origin/main                       [m f84a171 Merge pull request #4 from mohanmurali-code/chore/docs-automation

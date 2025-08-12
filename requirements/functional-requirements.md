@@ -30,11 +30,14 @@ Core application features and capabilities that define what the system must do t
 **Description:** Full CRUD operations for tasks with rich metadata support.
 
 **Requirements:**
-- **Create:** Quick add button per column, detailed task creation modal
+- **Create:** Quick add button per column; dedicated task creation modal dialog
 - **Read:** Display task title, description, priority, due date, tags, assignee
-- **Update:** Inline editing for title, priority, due date; modal for full editing
+- **Update (Inline):** Inline edit on card for title, priority, due date, and tags; Enter to save, Esc to cancel, Tab to navigate; autosave within 1s with optimistic UI
+- **Update (Modal):** Full edit modal for all fields including description and checklist; validation with inline errors
 - **Delete:** Soft delete with confirmation, hard delete option in settings
 - **Metadata:** Priority (Low, Medium, High, Critical), tags, due dates, time estimates
+
+Note: See FR-019 (Inline Card Editing) and FR-020 (Task Creation Modal) for detailed UX and behavior.
 
 **Acceptance Criteria:**
 - Tasks can be created in any column
@@ -79,6 +82,154 @@ Core application features and capabilities that define what the system must do t
 - Filters can be combined using AND/OR logic
 - Saved filters persist across sessions
 - CSV export includes all visible task data
+
+---
+
+### FR-013: Column Policies and WIP Enforcement
+**Priority:** P1 (High)
+**Description:** Configurable per-column policies for limits, sorting, and presentation.
+
+**Requirements:**
+- **WIP Modes:** Support soft (warn) and hard (block) WIP limits per column
+- **Visual Indicators:** Over-limit state with count badges and color emphasis
+- **Sorting:** Per-column sort mode (manual, priority, due date) with persistent choice
+- **Presentation:** Optional column color, description tooltip, and header actions
+- **Limits:** Configurable maximum tasks visible before virtualization kicks in
+
+**Acceptance Criteria:**
+- WIP limits can be set per column with soft/hard behavior
+- Over-limit columns show clear indicators and accessible announcements
+- Users can switch and persist sort mode per column
+- Column color and description render in headers consistently
+
+---
+
+### FR-014: Card Presentation and Customization
+**Priority:** P1 (High)
+**Description:** Flexible card layout with quick actions and density options.
+
+**Requirements:**
+- **Visible Fields:** Toggle visibility of description, due date, priority, and tags on cards
+- **Density:** Compact, Comfortable, and Spacious card densities
+- **Badges:** Show checklist progress, overdue indicator, and tag count
+- **Quick Actions:** Hover actions for edit, move to, set priority, and add tag
+- **Keyboard:** Shortcut to open quick edit; move card within column
+
+**Acceptance Criteria:**
+- Field visibility toggles persist and apply across the board
+- Density setting updates card layout instantly
+- Badges reflect real-time task state (overdue, checklist %)
+- Quick actions are accessible via mouse and keyboard
+
+---
+
+### FR-015: Task Checklists (Subtasks)
+**Priority:** P1 (High)
+**Description:** Lightweight checklists within tasks to break work into steps.
+
+**Requirements:**
+- **Checklist Items:** Add, edit, reorder, complete items; progress shown on card
+- **Conversion:** Convert checklist item to a full task (keeps link)
+- **Persistence:** Checklist changes autosave and are undoable
+- **Limits:** Up to 200 checklist items per task
+
+**Acceptance Criteria:**
+- Checklist UI supports CRUD and drag-reorder
+- Card badge shows accurate completion percentage
+- Converting to task creates a linked task with reference back
+- Undo restores prior checklist state
+
+---
+
+### FR-016: Bulk Operations on Board
+**Priority:** P1 (High)
+**Description:** Efficient multi-select and bulk actions across columns.
+
+**Requirements:**
+- **Selection:** Shift for range, Ctrl/Cmd for toggle across multiple columns
+- **Bulk Edit:** Change status, priority, due date, and tags in bulk
+- **Bulk Move:** Move selected tasks to target column and position
+- **Safety:** Confirmation for destructive operations; undo support
+
+**Acceptance Criteria:**
+- Users can select up to 100 tasks and apply bulk edits
+- Bulk moves respect column WIP rules and ordering
+- Operations complete within 500ms for 100 tasks
+- Undo reverts bulk operations fully
+
+---
+
+### FR-017: Board Templates and Presets
+**Priority:** P2 (Medium)
+**Description:** Save, apply, and share board/column configurations.
+
+**Requirements:**
+- **Presets:** Built-in presets (Simple 3-step, 5-step default, Personal GTD)
+- **Save/Load:** Save current board configuration as a custom preset
+- **Export/Import:** Export/import board configuration as JSON
+- **Reset:** Restore board to default configuration
+
+**Acceptance Criteria:**
+- Presets apply columns, colors, WIP limits, and sort modes
+- Custom presets persist and are selectable
+- Exported JSON reimports to recreate the board
+- Reset restores the initial default accurately
+
+---
+
+### FR-018: Archiving and Activity History
+**Priority:** P2 (Medium)
+**Description:** Keep boards tidy and provide traceability without cluttering the UI.
+
+**Requirements:**
+- **Archive:** Archive completed tasks and optionally columns (hide from active view)
+- **Activity:** Per-task activity log for moves, edits, and status changes
+- **Restore:** Restore archived tasks/columns back to active board
+- **Retention:** Configurable retention for archived items
+
+**Acceptance Criteria:**
+- Archived items are excluded from counts unless included via filter
+- Activity log records who/what/when for key actions
+- Restore returns items to original column and position when possible
+- Retention policy removes items per configuration
+
+---
+
+### FR-019: Inline Card Editing
+**Priority:** P0 (Critical)
+**Description:** Edit key task fields directly on the card with fast, accessible interactions.
+
+**Requirements:**
+- **Editable Fields:** Title, priority, due date, and tags editable inline on the card
+- **Interactions:** Single click or keyboard shortcut to enter edit; Enter to commit, Esc to cancel, Tab/Shift+Tab to move between fields
+- **Autosave:** Changes autosave within 1 second with visible save status; optimistic updates with error rollback
+- **Validation:** Prevent empty titles; validate date formats; accessible inline error messaging
+- **Undo:** Ctrl+Z reverts the last inline edit per task
+
+**Acceptance Criteria:**
+- Inline edits persist and reflect immediately across views
+- Keyboard-only editing flow is fully supported and accessible
+- Validation errors are announced and prevent invalid saves
+- Undo restores the prior field value
+
+---
+
+### FR-020: Task Creation Modal
+**Priority:** P0 (Critical)
+**Description:** A focused modal dialog to create a new task with essential fields and sensible defaults.
+
+**Requirements:**
+- **Launch Points:** Quick Add button in each column, global shortcut, and empty-state CTA
+- **Fields:** Title (required), description, status (preselected by column), priority, due date, and tags
+- **Defaults:** Status derived from invoking column; priority default Medium; due date optional
+- **Accessibility:** Focus trap, labeled inputs, keyboard navigable, Esc to close; submit via Enter
+- **Behaviors:** Create-and-close and Create-and-add-another modes; validation with inline errors
+
+**Acceptance Criteria:**
+- Modal opens with focus on Title and preselected status
+- Valid submit creates task within 1 second and places it at top of target column
+- Create-and-add-another keeps modal open and resets fields appropriately
+- Invalid inputs show inline errors and prevent submission
 
 ---
 

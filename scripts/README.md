@@ -78,3 +78,29 @@ node scripts/pr.js --branch chore/docs-automation --title "docs: automate" --bod
 - Resumes safely after restarts
 - Runs: branch create/switch, stage changed files, commit (single message), push, and `gh pr create`
 - Non-interactive mode for CI; minimal flags required
+
+## Dev server helper scripts (Windows)
+
+These `.bat` helpers manage the Vite dev server for the web app without spawning new ports.
+
+All scripts assume default port 5173 and the app at `apps/web`.
+
+### web-dev-start.bat
+Starts the Vite dev server on the default port and opens the browser. It kills any existing process on port 5173 first.
+
+Usage (double-click or from terminal):
+```bat
+scripts\web-dev-start.bat
+```
+
+### web-dev-restart.bat
+Stops the server on port 5173 and starts it again, reopening the browser.
+```bat
+scripts\web-dev-restart.bat
+```
+
+### web-dev-stop.bat
+Stops any process listening on port 5173 (the Vite dev server by default).
+```bat
+scripts\web-dev-stop.bat
+```
