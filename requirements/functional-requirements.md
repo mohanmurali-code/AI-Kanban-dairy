@@ -166,20 +166,111 @@ Core application features and capabilities that define what the system must do t
 
 ### FR-009: User Preferences
 **Priority:** P1 (High)
-**Description:** Comprehensive user customization and preference management.
+**Description:** Comprehensive, accessible, and performant preference management for appearance, layout, and notifications with immediate visual feedback and durable persistence.
 
 **Requirements:**
-- **Theme Selection:** Light, Dark, System, High Contrast
-- **Color Customization:** Accent color selection, custom color schemes
-- **Font Settings:** Font family, size, line height, and spacing
-- **Layout Options:** Sidebar position, board density, card size
-- **Notification Preferences:** Due date reminders, completion notifications
+- **Theme & Contrast**
+  - **Theme Modes:** Light, Dark, System (auto), High Contrast
+  - **System Mode:** Follows OS `prefers-color-scheme` and updates live on OS change
+  - **High Contrast:** Overrides all custom colors to meet WCAG 2.1 AA contrast
+- **Color Customization**
+  - **Accent Color:** Predefined palette (min 8 options) + custom HEX input with validation
+  - **Custom Schemes:** Optional custom light/dark scheme (primary, surface, text)
+  - **Live Preview:** Changes apply instantly; revert available via “Reset to defaults”
+- **Typography**
+  - **Font Family:** At least three families (System UI, Serif, Mono)
+  - **Font Size:** Scales in steps (S, M, L, XL) mapped to rem values
+  - **Line Height & Spacing:** Normal/Comfortable/Relaxed presets
+- **Layout & Density**
+  - **Sidebar Position:** Left or Right
+  - **Board Density:** Compact, Cozy, Comfortable (affects card padding and column gaps)
+  - **Card Size:** S, M, L presets impacting title line-clamp and metadata visibility
+- **Notifications**
+  - **Due Date Reminders:** On/Off with lead time (5m, 15m, 1h, 1d)
+  - **Completion Notifications:** On/Off
+  - **Quiet Hours:** Optional daily window to suppress notifications
+- **Behavior**
+  - **Undo Duration:** Time window for undo actions (e.g., 5–30s)
+  - **Animations:** Enable/disable motion for reduced-motion users
+- **Accessibility**
+  - Respect `prefers-reduced-motion`
+  - All controls keyboard-accessible with visible focus and ARIA labels
+
+**Persistence & Defaults:**
+- Preferences persist locally and load before first paint to avoid flash of incorrect theme
+- Provide a single **Reset to defaults** action and a **Restore last applied** (1-level undo) within the session
+- Versioned schema with forward-compatible migrations
+
+**Data Model (client-side, persisted):**
+```json
+{
+  "version": 1,
+  "appearance": {
+    "theme": "system",            
+    "highContrast": false,
+    "accentColor": "#7c3aed",    
+    "customScheme": {
+      "light": { "primary": "#7c3aed", "surface": "#ffffff", "text": "#111827" },
+      "dark":  { "primary": "#a78bfa", "surface": "#0b1220", "text": "#f9fafb" }
+    },
+    "fontFamily": "system-ui",
+    "fontSize": "M",              
+    "lineSpacing": "Normal",      
+    "reducedMotion": "system"     
+  },
+  "layout": {
+    "sidebar": "left",            
+    "boardDensity": "Cozy",       
+    "cardSize": "M"               
+  },
+  "notifications": {
+    "dueReminders": { "enabled": true, "lead": "15m" },
+    "completion": { "enabled": true },
+    "quietHours": { "enabled": false, "from": "22:00", "to": "07:00" }
+  },
+  "behavior": {
+    "undoWindowSec": 10,
+    "animations": "system"        
+  }
+}
+```
+
+**UX & Interactions:**
+- `Themes` page: Theme mode buttons (Light, Dark, System, High Contrast), accent palette, custom color input with validation and preview, reset button
+- `Settings` page: Typography controls, layout toggles (sidebar position, density, card size), behavior toggles, notification settings with test notification
+- All changes preview immediately; no explicit Save button required
+- Keyboard: Tab/Shift+Tab traversal; Arrow keys for radio-group style options; Enter/Space to toggle
+
+**Non-Functional:**
+- Apply theme and accent in ≤ 50ms on modern hardware
+- High Contrast and reduced-motion modes meet WCAG 2.1 AA and `prefers-reduced-motion`
+- No network dependency for applying preferences
 
 **Acceptance Criteria:**
-- All theme options render correctly
-- Color changes apply immediately
-- Font settings improve readability
-- Layout preferences persist across sessions
+- **Theme & Contrast**
+  - Light/Dark render correctly across all pages and components
+  - System mode updates when OS theme changes without reload
+  - High Contrast achieves ≥ 4.5:1 text contrast everywhere
+- **Color Customization**
+  - Accent changes reflect instantly in buttons, links, focus rings
+  - HEX input validates (#RGB, #RRGGBB); invalid values are rejected with inline error
+  - Reset restores default palette and removes custom scheme
+- **Typography**
+  - Font family switch updates global text without layout breakage
+  - Size and spacing presets scale components consistently (titles, cards, menus)
+- **Layout & Density**
+  - Sidebar moves left/right and persists after reload
+  - Density and card size affect spacing and visible metadata as specified
+- **Notifications**
+  - Due reminders honor lead time; completion toasts show when tasks complete
+  - Quiet Hours suppress notifications during configured window
+- **Accessibility & Behavior**
+  - All controls operable via keyboard with visible focus
+  - Reduced-motion disables non-essential animations
+  - Undo window duration is respected by undo-capable actions
+- **Persistence**
+  - All preferences persist across sessions and restore before first paint
+  - Version upgrades migrate existing preferences without loss
 
 ---
 
