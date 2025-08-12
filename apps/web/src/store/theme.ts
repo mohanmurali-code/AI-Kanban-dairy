@@ -222,16 +222,42 @@ export const usePreferencesStore = create<PreferencesState>()(
       version: defaultPreferences.version,
       // Simple migration for future versions if schema changes
       migrate: (persistedState, version) => {
-        if (version === 0) {
-          // migrate from version 0 to 1
-          // e.g. add new fields with default values
-          return {
-            ...defaultPreferences, // Start with current defaults
-            ...(persistedState as any), // Merge old state, overwriting defaults where present
-            version: 1, // Set to current version
-          } as PreferencesState
+        const oldState = (persistedState || {}) as any
+        // Deep-merge with defaults so incomplete nested objects don't wipe required defaults
+        const merged: PreferencesState = {
+          ...defaultPreferences,
+          ...oldState,
+          appearance: {
+            ...defaultPreferences.appearance,
+            ...(oldState.appearance || {}),
+          },
+          layout: {
+            ...defaultPreferences.layout,
+            ...(oldState.layout || {}),
+          },
+          notifications: {
+            ...defaultPreferences.notifications,
+            ...(oldState.notifications || {}),
+            dueReminders: {
+              ...defaultPreferences.notifications.dueReminders,
+              ...(oldState.notifications?.dueReminders || {}),
+            },
+            completion: {
+              ...defaultPreferences.notifications.completion,
+              ...(oldState.notifications?.completion || {}),
+            },
+            quietHours: {
+              ...defaultPreferences.notifications.quietHours,
+              ...(oldState.notifications?.quietHours || {}),
+            },
+          },
+          behavior: {
+            ...defaultPreferences.behavior,
+            ...(oldState.behavior || {}),
+          },
+          version: 1,
         }
-        return persistedState as PreferencesState
+        return merged
       },
     },
   ),
@@ -270,11 +296,17 @@ export const applyThemeToDocument = (theme: ThemeMode, accentColor: string, high
 }
 
 // Basic hex to RGB converter for CSS variables
-function hexToRgb(hex: string): string | null {
+function hexToRgb(hex?: string | null): string | null {
+  if (!hex || typeof hex !== 'string') return null
+  const trimmed = hex.trim()
+  if (trimmed.length === 0) return null
+  // Ensure leading '#'
+  let normalized = trimmed.startsWith('#') ? trimmed : `#${trimmed}`
+  // Expand shorthand like #abc to #aabbcc
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
-  hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-    return r + r + g + g + b + b
+  normalized = normalized.replace(shorthandRegex, function (_m, r, g, b) {
+    return `#${r}${r}${g}${g}${b}${b}`
   })
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized)
   return result ? `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` : null
 }
