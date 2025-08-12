@@ -109,6 +109,31 @@ Data storage, schema, migration, and management requirements for the AI Kanban P
 
 ---
 
+### DR-004a: Checklist Item Schema
+**Priority:** P1 (High)
+**Description:** Schema for lightweight checklist items within a task.
+
+**Requirements:**
+```json
+{
+  "id": "string (UUID v4)",
+  "taskId": "string (UUID v4)",
+  "text": "string (1-500 chars)",
+  "isCompleted": "boolean",
+  "order": "number (position)",
+  "linkedTaskId": "string (UUID v4, optional)",
+  "createdAt": "ISO 8601 datetime string",
+  "updatedAt": "ISO 8601 datetime string"
+}
+```
+
+**Acceptance Criteria:**
+- Checklist items validate and persist order
+- Converting to task sets `linkedTaskId` and preserves relationships
+- Progress can be derived efficiently per task
+
+---
+
 ### DR-005: Note Schema
 **Priority:** P0 (Critical)
 **Description:** Schema for note metadata and organization.
@@ -157,7 +182,8 @@ Data storage, schema, migration, and management requirements for the AI Kanban P
     "columns": "array of column objects",
     "defaultView": "string (view name)",
     "autoSave": "boolean",
-    "wipLimits": "object (column ID to limit mapping)"
+    "wipLimits": "object (column ID to limit mapping)",
+    "presets": "array of saved board preset objects"
   },
   "notes": {
     "autoSave": "boolean",
@@ -184,6 +210,57 @@ Data storage, schema, migration, and management requirements for the AI Kanban P
 - Default values are provided for all settings
 - Schema versioning supports upgrades
 - Settings persist across application restarts
+
+---
+
+### DR-006a: Column Schema
+**Priority:** P0 (Critical)
+**Description:** Schema for Kanban columns including policies and presentation.
+
+**Requirements:**
+```json
+{
+  "id": "string (UUID v4)",
+  "name": "string (1-50 chars)",
+  "wip": {
+    "mode": "enum (soft, hard)",
+    "limit": "number (0-999, 0 disables)"
+  },
+  "sortMode": "enum (manual, priority, dueDate)",
+  "color": "string (hex color, optional)",
+  "description": "string (0-200 chars, optional)",
+  "visibleLimit": "number (virtualize beyond, optional)",
+  "order": "number (position)"
+}
+```
+
+**Acceptance Criteria:**
+- Columns validate with default values for missing optional fields
+- Sort mode and WIP settings persist and are applied
+- Visible limit triggers virtualization in UI
+
+---
+
+### DR-006b: Board Preset Schema
+**Priority:** P2 (Medium)
+**Description:** Schema for saving and sharing board configurations.
+
+**Requirements:**
+```json
+{
+  "id": "string (UUID v4)",
+  "name": "string (1-80 chars)",
+  "createdAt": "ISO 8601 datetime string",
+  "updatedAt": "ISO 8601 datetime string",
+  "columns": "array of Column Schema",
+  "metadata": "object (extensible)"
+}
+```
+
+**Acceptance Criteria:**
+- Presets serialize/deserialize without loss
+- Import/export maintains column order and policies
+- Backward compatibility supported via `metadata`
 
 ---
 

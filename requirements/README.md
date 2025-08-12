@@ -30,16 +30,16 @@ The AI Kanban Personal Diary is a personal productivity application that combine
 
 | Category | Total | P0 | P1 | P2 | P3 |
 |----------|-------|----|----|----|----|
-| Functional | 12 | 6 | 4 | 2 | 0 |
+| Functional | 20 | 8 | 9 | 3 | 0 |
 | Non-Functional | 14 | 6 | 6 | 2 | 0 |
-| Data | 14 | 6 | 6 | 2 | 0 |
+| Data | 17 | 7 | 8 | 2 | 0 |
 | User | 17 | 6 | 8 | 3 | 0 |
 | Technical | 18 | 6 | 9 | 3 | 0 |
 
-**Total Requirements:** 75
-- **P0 (Critical):** 30 - Must have for MVP
-- **P1 (High):** 33 - Important for user satisfaction  
-- **P2 (Medium):** 12 - Nice to have features
+**Total Requirements:** 86
+- **P0 (Critical):** 33 - Must have for MVP
+- **P1 (High):** 39 - Important for user satisfaction  
+- **P2 (Medium):** 14 - Nice to have features
 - **P3 (Low):** 0 - Future enhancements
 
 *Status reflects the refined and prioritized requirements structure*

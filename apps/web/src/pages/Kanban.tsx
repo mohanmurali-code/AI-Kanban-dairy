@@ -1,7 +1,9 @@
 import { DndContext, type DragEndEvent } from '@dnd-kit/core'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTaskStore } from '../store/tasks'
-import type { ColumnKey } from '../types'
+import { TaskCard } from '../components/TaskCard'
+import { TaskCreationModal } from '../components/TaskCreationModal'
+import type { ColumnKey, TaskItem } from '../types'
 
 /**
  * Column definitions for the Kanban board.
@@ -18,28 +20,55 @@ const columns: { key: ColumnKey; name: string }[] = [
 /**
  * Kanban board page.
  *
- * Displays task columns, quick-add inputs per column, and sets up a drag-and-drop
- * context. Drag-and-drop behavior will be implemented in a later iteration.
+ * Displays task columns with inline editing support and a task creation modal.
+ * Drag-and-drop behavior will be implemented in a later iteration.
  */
 function Kanban() {
-  const { tasks, columnOrder, createTask } = useTaskStore()
-  /** Local input state for quick task creation per column. */
-  const [draftInput, setDraftInput] = useState<Record<ColumnKey, string>>({
-    draft: '',
-    refined: '',
-    in_progress: '',
-    blocked: '',
-    completed: '',
-  })
+  const { tasks, columnOrder } = useTaskStore()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalDefaultStatus, setModalDefaultStatus] = useState<ColumnKey>('draft')
 
   /**
-   * Create a new task in the given column if the input has a non-empty title.
+   * Handle global keyboard shortcuts.
    */
-  const onAdd = (status: ColumnKey) => {
-    const title = draftInput[status].trim()
-    if (!title) return
-    createTask({ title, status })
-    setDraftInput((s) => ({ ...s, [status]: '' }))
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + N to open task creation modal
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault()
+        setModalDefaultStatus('draft')
+        setIsModalOpen(true)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  /**
+   * Open the task creation modal with a specific column preselected.
+   */
+  const openCreateModal = (status: ColumnKey) => {
+    setModalDefaultStatus(status)
+    setIsModalOpen(true)
+  }
+
+  /**
+   * Close the task creation modal.
+   */
+  const closeCreateModal = () => {
+    setIsModalOpen(false)
+  }
+
+  /**
+   * Handle task creation from the modal.
+   */
+  const handleTaskCreated = (task: TaskItem) => {
+    // Task is automatically added to the store, so we just close the modal
+    // unless it's "Create & Add Another" mode
+    if (!task) {
+      closeCreateModal()
+    }
   }
 
   /**
@@ -52,43 +81,70 @@ function Kanban() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Kanban</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Kanban</h2>
+        <button
+          onClick={() => openCreateModal('draft')}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          + New Task
+        </button>
+      </div>
+
       <DndContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
           {columns.map(({ key, name }) => (
-            <div key={key} className="rounded-md border p-3">
+            <div key={key} className="rounded-md border bg-gray-50 p-3">
               <div className="mb-2 flex items-center justify-between">
-                <div className="text-sm font-medium opacity-80">{name}</div>
-                <div className="text-xs opacity-60">{columnOrder[key]?.length ?? 0}</div>
+                <div className="text-sm font-medium text-gray-700">{name}</div>
+                <div className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">
+                  {columnOrder[key]?.length ?? 0}
+                </div>
               </div>
-              <div className="space-y-2">
+              
+              <div className="space-y-2 min-h-[100px]">
                 {(columnOrder[key] ?? []).map((taskId) => {
-                  const t = tasks[taskId]
-                  return (
-                    <div key={taskId} className="rounded-md border p-2 text-sm">
-                      {t.title}
-                    </div>
-                  )
+                  const task = tasks[taskId]
+                  if (!task) return null
+                  
+                  return <TaskCard key={taskId} task={task} />
                 })}
+                
+                {/* Empty state */}
+                {(!columnOrder[key] || columnOrder[key].length === 0) && (
+                  <div className="text-center py-8 text-gray-500">
+                    <div className="text-sm mb-2">No tasks yet</div>
+                    <button
+                      onClick={() => openCreateModal(key)}
+                      className="text-blue-600 hover:text-blue-700 text-sm underline"
+                    >
+                      Add your first task
+                    </button>
+                  </div>
+                )}
               </div>
-              <div className="mt-3 flex gap-2">
-                <input
-                  className="w-full rounded-md border bg-transparent p-2 text-sm"
-                  placeholder="Quick add"
-                  value={draftInput[key]}
-                  onChange={(e) => setDraftInput((s) => ({ ...s, [key]: e.target.value }))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') onAdd(key)
-                  }}
-                />
-                <button className="rounded-md border px-3 py-2 text-sm" onClick={() => onAdd(key)}>
-                  Add
+              
+              {/* Quick Add Button */}
+              <div className="mt-3">
+                <button
+                  onClick={() => openCreateModal(key)}
+                  className="w-full px-3 py-2 text-sm text-gray-600 border border-dashed border-gray-300 rounded-md hover:border-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                >
+                  + Quick Add
                 </button>
               </div>
             </div>
           ))}
         </div>
       </DndContext>
+
+      {/* Task Creation Modal */}
+      <TaskCreationModal
+        isOpen={isModalOpen}
+        onClose={closeCreateModal}
+        defaultStatus={modalDefaultStatus}
+        onTaskCreated={handleTaskCreated}
+      />
     </div>
   )
 }
