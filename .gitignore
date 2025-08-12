@@ -14,3 +14,4 @@ __pycache__/
 # Env
 .env
 .env.*
+PR adds the initial documentation scaffold and guidelines for the Kanban Personal Diary project.
