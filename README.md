@@ -20,6 +20,7 @@ Local-first personal Kanban and notes app. This repository contains planning doc
 
 ## Development tools
 - `scripts/create-pr.ps1` - PowerShell script for creating GitHub PRs efficiently
+- `scripts/pr.js` - Cross-platform PR creation with persistent config (`.prconfig.json`)
 - See `scripts/README.md` for usage and examples
 
 See docs/Roadmap.md for milestones and next actions.

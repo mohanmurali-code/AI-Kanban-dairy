@@ -3,7 +3,7 @@
 @layer base {
   :root {
     color-scheme: light dark;
-    /* Dark navy inspiration tokens (RGB triplets for Tailwind arbitrary colors) */
+    /* Default (Dark) theme inspiration tokens (RGB triplets for Tailwind arbitrary colors) */
     --bg: 14 34 48;            /* app background */
     --surface: 20 44 60;       /* panels */
     --surface-2: 26 54 73;     /* cards / inputs */
@@ -16,9 +16,32 @@
     --radius-lg: 18px;
   }
 
+  :root[data-theme='light'] {
+    color-scheme: light;
+    --bg: 243 244 246;         /* light app background */
+    --surface: 255 255 255;    /* light panels */
+    --surface-2: 249 250 251;  /* light cards / inputs */
+    --border: 229 231 235;     /* light soft border */
+    --fg: 17 24 39;            /* light foreground text */
+    --fg-muted: 107 114 128;   /* light secondary text */
+    --primary: 67 56 202;      /* light accent (indigo) */
+  }
+
+  :root[data-theme='high-contrast'] {
+    color-scheme: dark;
+    --bg: 0 0 0;               /* pure black background */
+    --surface: 0 0 0;          /* pure black panels */
+    --surface-2: 0 0 0;        /* pure black cards / inputs */
+    --border: 255 255 255;     /* pure white border */
+    --fg: 255 255 255;         /* pure white foreground */
+    --fg-muted: 192 192 192;   /* light gray muted text */
+    --primary: 255 255 0;      /* pure yellow accent */
+  }
+
   html, body {
     background-color: rgb(var(--bg));
     color: rgb(var(--fg));
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 }
 

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
+import { usePreferencesStore, applyThemeToDocument } from './store/theme'
 
 /**
  * Application entry point.
@@ -34,8 +35,35 @@ const router = createBrowserRouter([
   },
 ])
 
+function Main() {
+  const { theme, accentColor, highContrast, animations } = usePreferencesStore()
+
+  useEffect(() => {
+    applyThemeToDocument(theme, accentColor, highContrast)
+
+    // Handle prefers-reduced-motion
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const handleReducedMotion = () => {
+      if (animations === 'system') {
+        document.documentElement.classList.toggle('--reduced-motion', mediaQuery.matches)
+      } else if (animations === 'off') {
+        document.documentElement.classList.classList.add('--reduced-motion')
+      } else {
+        document.documentElement.classList.remove('--reduced-motion')
+      }
+    }
+
+    mediaQuery.addEventListener('change', handleReducedMotion)
+    handleReducedMotion() // Apply initially
+
+    return () => mediaQuery.removeEventListener('change', handleReducedMotion)
+  }, [theme, accentColor, highContrast, animations])
+
+  return <RouterProvider router={router} />
+}
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Main />
   </React.StrictMode>,
 )

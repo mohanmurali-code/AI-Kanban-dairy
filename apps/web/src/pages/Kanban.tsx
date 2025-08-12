@@ -28,61 +28,41 @@ function Kanban() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalDefaultStatus, setModalDefaultStatus] = useState<ColumnKey>('draft')
 
-  /**
-   * Handle global keyboard shortcuts.
-   */
+  // Global shortcut: Ctrl/Cmd+N opens creation modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + N to open task creation modal
-      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
         e.preventDefault()
         setModalDefaultStatus('draft')
         setIsModalOpen(true)
       }
     }
-
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  /**
-   * Open the task creation modal with a specific column preselected.
-   */
   const openCreateModal = (status: ColumnKey) => {
     setModalDefaultStatus(status)
     setIsModalOpen(true)
   }
 
-  /**
-   * Close the task creation modal.
-   */
   const closeCreateModal = () => {
     setIsModalOpen(false)
   }
 
-  /**
-   * Handle task creation from the modal.
-   */
-  const handleTaskCreated = (task: TaskItem) => {
-    // Task is automatically added to the store, so we just close the modal
-    // unless it's "Create & Add Another" mode
-    if (!task) {
-      closeCreateModal()
-    }
+  const handleTaskCreated = (_task: TaskItem) => {
+    // Store already updated by create; modal close handled by modal unless add-another
   }
 
-  /**
-   * Placeholder for handling drag end events.
-   * Will be wired to move tasks within/between columns.
-   */
+  // Placeholder DnD handler
   const onDragEnd = (_e: DragEndEvent) => {
     // Wire full DnD later
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Kanban</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Kanban</h2>
         <button
           onClick={() => openCreateModal('draft')}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -101,15 +81,14 @@ function Kanban() {
                   {columnOrder[key]?.length ?? 0}
                 </div>
               </div>
-              
+
               <div className="space-y-2 min-h-[100px]">
                 {(columnOrder[key] ?? []).map((taskId) => {
                   const task = tasks[taskId]
                   if (!task) return null
-                  
                   return <TaskCard key={taskId} task={task} />
                 })}
-                
+
                 {/* Empty state */}
                 {(!columnOrder[key] || columnOrder[key].length === 0) && (
                   <div className="text-center py-8 text-gray-500">
@@ -123,8 +102,8 @@ function Kanban() {
                   </div>
                 )}
               </div>
-              
-              {/* Quick Add Button */}
+
+              {/* Quick Add Button (opens modal) */}
               <div className="mt-3">
                 <button
                   onClick={() => openCreateModal(key)}
@@ -138,7 +117,6 @@ function Kanban() {
         </div>
       </DndContext>
 
-      {/* Task Creation Modal */}
       <TaskCreationModal
         isOpen={isModalOpen}
         onClose={closeCreateModal}
