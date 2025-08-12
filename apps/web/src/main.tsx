@@ -47,7 +47,7 @@ function Main() {
       if (animations === 'system') {
         document.documentElement.classList.toggle('--reduced-motion', mediaQuery.matches)
       } else if (animations === 'off') {
-        document.documentElement.classList.classList.add('--reduced-motion')
+        document.documentElement.classList.add('--reduced-motion')
       } else {
         document.documentElement.classList.remove('--reduced-motion')
       }
