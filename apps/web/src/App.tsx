@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import React, { useState, useEffect } from 'react'
 import './dark-dashboard.css'
 import './light-simple.css'
 import './dark-img-1.css'
@@ -14,23 +13,10 @@ import './webp-layout.css'
  */
 
 
-const themeOptions = [
-  { label: 'Dark Dashboard', value: 'theme-dark-dashboard' },
-  { label: 'Light Simple', value: 'theme-light-simple' },
-  { label: 'Dark Image 1', value: 'theme-dark-img-1' },
-  { label: 'Dark Image 3', value: 'theme-dark-img-3' },
-  { label: 'WebP Layout', value: 'theme-webp-layout' },
-]
-
 function App() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'theme-dark-dashboard')
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme)
-  }, [theme])
 
   return (
-    <div className={`min-h-screen ${theme}`}>
+  <div className="min-h-screen">
       <header className="border-b bg-[rgb(var(--surface))] text-[rgb(var(--fg))]">
         <div className="container-app flex items-center justify-between py-4">
           <div className="text-lg font-semibold opacity-95">Kanban Personal Diary</div>
@@ -44,29 +30,14 @@ function App() {
             <NavLink to="/tasks" className={({ isActive }) => isActive ? 'text-cyan-300 font-medium' : 'opacity-80 hover:opacity-100'}>
               Tasks
             </NavLink>
-            <NavLink to="/themes" className={({ isActive }) => isActive ? 'text-cyan-300 font-medium' : 'opacity-80 hover:opacity-100'}>
-              Themes
-            </NavLink>
-            <NavLink to="/layouts" className={({ isActive }) => isActive ? 'text-cyan-300 font-medium' : 'opacity-80 hover:opacity-100'}>
-              Layouts
+            <NavLink to="/theme-layout" className={({ isActive }) => isActive ? 'text-cyan-300 font-medium' : 'opacity-80 hover:opacity-100'}>
+              Theme & Layout
             </NavLink>
             <NavLink to="/settings" className={({ isActive }) => isActive ? 'text-cyan-300 font-medium' : 'opacity-80 hover:opacity-100'}>
               Settings
             </NavLink>
           </nav>
-          {/* Theme Selector */}
-          <div className="ml-8">
-            <select
-              value={theme}
-              onChange={e => setTheme(e.target.value)}
-              className="px-2 py-1 rounded border border-gray-300 bg-[rgb(var(--bg-card))] text-[rgb(var(--text-main))]"
-              aria-label="Select Theme"
-            >
-              {themeOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
+          {/* Theme Selector removed, now in Theme & Layout page */}
         </div>
       </header>
       <main className="container-app py-8">
