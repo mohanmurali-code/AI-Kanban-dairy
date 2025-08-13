@@ -481,3 +481,25 @@ Note: See FR-019 (Inline Card Editing) and FR-020 (Task Creation Modal) for deta
 - Touch interactions work reliably
 - Mobile interface maintains core functionality
 - Orientation changes handled gracefully
+
+---
+
+### FR-021: Layout Management Tab
+**Priority:** P1 (High)
+**Description:** Dedicated tab for managing and customizing the layout of any page UI.
+
+**Requirements:**
+- **Tab Access:** A "Layouts" tab is available in the main navigation or settings.
+- **Page Selection:** Users can select any page (e.g., Board, Notes, Settings) to customize its layout.
+- **Layout Options:** Grid, List, Split View, Sidebar positions, and custom arrangements per page.
+- **Preview:** Live preview of layout changes before applying.
+- **Persistence:** Layout choices persist across sessions and load before first paint.
+- **Reset:** Option to reset layout for any page to default.
+- **Accessibility:** All layout controls are keyboard-accessible and screen reader compatible.
+
+**Acceptance Criteria:**
+- "Layouts" tab is visible and accessible from main navigation/settings
+- Users can change layout for any supported page and see live preview
+- Layout changes persist and restore correctly after reload
+- Reset restores default layout instantly
+- All controls meet accessibility standards
