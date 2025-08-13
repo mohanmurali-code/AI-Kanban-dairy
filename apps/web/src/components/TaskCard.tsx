@@ -4,9 +4,10 @@ import { useTaskStore } from '../store/tasks'
 
 interface TaskCardProps {
   task: TaskItem
+  className?: string // Optional for theme overrides or extra styling
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, className }: TaskCardProps) {
   const { updateTask } = useTaskStore()
   const [editingField, setEditingField] = useState<'title' | 'priority' | 'dueDate' | 'tags' | null>(null)
   const [editValue, setEditValue] = useState('')
@@ -124,25 +125,12 @@ export function TaskCard({ task }: TaskCardProps) {
     }
   }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'low':
-        return 'bg-blue-100 text-blue-800'
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'high':
-        return 'bg-orange-100 text-orange-800'
-      case 'critical':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
+  // Priority badge can use .badge and a data-priority attribute for future theme extensions
 
   return (
-    <div className="rounded-md border bg-white p-3 shadow-sm hover:shadow-md transition-shadow">
+    <div className={`card${className ? ` ${className}` : ''}`}>
       {/* Title Field */}
-      <div className="mb-2">
+  <div className="mb-2">
         {editingField === 'title' ? (
           <div className="space-y-2">
             <input
@@ -151,21 +139,21 @@ export function TaskCard({ task }: TaskCardProps) {
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full rounded border px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-input"
               placeholder="Enter task title"
             />
-            {saveError && <div className="text-xs text-red-600">{saveError}</div>}
+            {saveError && <div className="muted text-xs" style={{ color: 'var(--danger, #e11d48)' }}>{saveError}</div>}
             <div className="flex gap-2">
               <button
                 onClick={saveChanges}
                 disabled={isSaving}
-                className="rounded px-2 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+                className="button"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
               <button
                 onClick={cancelEdit}
-                className="rounded px-2 py-1 text-xs bg-gray-300 text-gray-700 hover:bg-gray-400"
+                className="button secondary"
               >
                 Cancel
               </button>
@@ -174,7 +162,7 @@ export function TaskCard({ task }: TaskCardProps) {
         ) : (
           <div
             onClick={() => startEditing('title')}
-            className="cursor-pointer font-medium text-gray-900 hover:bg-gray-50 rounded px-1 py-0.5 -ml-1"
+            className="cursor-pointer font-medium"
           >
             {task.title}
           </div>
@@ -182,7 +170,7 @@ export function TaskCard({ task }: TaskCardProps) {
       </div>
 
       {/* Priority Field */}
-      <div className="mb-2">
+  <div className="mb-2">
         {editingField === 'priority' ? (
           <div className="space-y-2">
             <select
@@ -190,7 +178,7 @@ export function TaskCard({ task }: TaskCardProps) {
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full rounded border px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-input"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -201,13 +189,13 @@ export function TaskCard({ task }: TaskCardProps) {
               <button
                 onClick={saveChanges}
                 disabled={isSaving}
-                className="rounded px-2 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+                className="button"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
               <button
                 onClick={cancelEdit}
-                className="rounded px-2 py-1 text-xs bg-gray-300 text-gray-700 hover:bg-gray-400"
+                className="button secondary"
               >
                 Cancel
               </button>
@@ -218,7 +206,7 @@ export function TaskCard({ task }: TaskCardProps) {
             onClick={() => startEditing('priority')}
             className="cursor-pointer inline-block"
           >
-            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority || 'medium')}`}>
+            <span className="badge" data-priority={task.priority || 'medium'}>
               {task.priority || 'Medium'}
             </span>
           </div>
@@ -236,19 +224,19 @@ export function TaskCard({ task }: TaskCardProps) {
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full rounded border px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="ui-input"
               />
               <div className="flex gap-2">
                 <button
                   onClick={saveChanges}
                   disabled={isSaving}
-                  className="rounded px-2 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+                  className="button"
                 >
                   {isSaving ? 'Saving...' : 'Save'}
                 </button>
                 <button
                   onClick={cancelEdit}
-                  className="rounded px-2 py-1 text-xs bg-gray-300 text-gray-700 hover:bg-gray-400"
+                  className="button secondary"
                 >
                   Cancel
                 </button>
@@ -257,7 +245,7 @@ export function TaskCard({ task }: TaskCardProps) {
                     setEditValue('')
                     saveChanges()
                   }}
-                  className="rounded px-2 py-1 text-xs bg-gray-500 text-white hover:bg-gray-600"
+                  className="button secondary"
                 >
                   Clear
                 </button>
@@ -266,7 +254,7 @@ export function TaskCard({ task }: TaskCardProps) {
           ) : (
             <div
               onClick={() => startEditing('dueDate')}
-              className="cursor-pointer text-xs text-gray-600 hover:bg-gray-50 rounded px-1 py-0.5 -ml-1"
+              className="cursor-pointer text-xs muted"
             >
               📅 {formatDueDate(task.dueDate)}
             </div>
@@ -285,20 +273,20 @@ export function TaskCard({ task }: TaskCardProps) {
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full rounded border px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="ui-input"
                 placeholder="Enter tags separated by commas"
               />
               <div className="flex gap-2">
                 <button
                   onClick={saveChanges}
                   disabled={isSaving}
-                  className="rounded px-2 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+                  className="button"
                 >
                   {isSaving ? 'Saving...' : 'Save'}
                 </button>
                 <button
                   onClick={cancelEdit}
-                  className="rounded px-2 py-1 text-xs bg-gray-300 text-gray-700 hover:bg-gray-400"
+                  className="button secondary"
                 >
                   Cancel
                 </button>
@@ -313,7 +301,7 @@ export function TaskCard({ task }: TaskCardProps) {
                 {task.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                    className="badge"
                   >
                     {tag}
                   </span>
@@ -326,10 +314,10 @@ export function TaskCard({ task }: TaskCardProps) {
 
       {/* Save Status Indicator */}
       {isSaving && (
-        <div className="text-xs text-blue-600">💾 Saving...</div>
+        <div className="text-xs muted">💾 Saving...</div>
       )}
       {saveError && (
-        <div className="text-xs text-red-600">❌ {saveError}</div>
+        <div className="text-xs muted" style={{ color: 'var(--danger, #e11d48)' }}>❌ {saveError}</div>
       )}
     </div>
   )

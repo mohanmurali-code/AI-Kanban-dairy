@@ -18,6 +18,7 @@ const Notes = React.lazy(() => import('./pages/Notes'))
 const Tasks = React.lazy(() => import('./pages/Tasks'))
 const Themes = React.lazy(() => import('./pages/Themes'))
 const Settings = React.lazy(() => import('./pages/Settings'))
+const Layouts = React.lazy(() => import('./pages/Layouts'))
 
 /** Router definition and route hierarchy. */
 const router = createBrowserRouter([
@@ -29,8 +30,9 @@ const router = createBrowserRouter([
       { path: 'kanban', element: <React.Suspense fallback={<div>Loading…</div>}><Kanban /></React.Suspense> },
       { path: 'notes', element: <React.Suspense fallback={<div>Loading…</div>}><Notes /></React.Suspense> },
       { path: 'tasks', element: <React.Suspense fallback={<div>Loading…</div>}><Tasks /></React.Suspense> },
-      { path: 'themes', element: <React.Suspense fallback={<div>Loading…</div>}><Themes /></React.Suspense> },
-      { path: 'settings', element: <React.Suspense fallback={<div>Loading…</div>}><Settings /></React.Suspense> },
+  { path: 'themes', element: <React.Suspense fallback={<div>Loading…</div>}><Themes /></React.Suspense> },
+  { path: 'settings', element: <React.Suspense fallback={<div>Loading…</div>}><Settings /></React.Suspense> },
+  { path: 'layouts', element: <React.Suspense fallback={<div>Loading…</div>}><Layouts /></React.Suspense> },
     ],
   },
 ])

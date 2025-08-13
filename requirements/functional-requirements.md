@@ -486,20 +486,28 @@ Note: See FR-019 (Inline Card Editing) and FR-020 (Task Creation Modal) for deta
 
 ### FR-021: Layout Management Tab
 **Priority:** P1 (High)
-**Description:** Dedicated tab for managing and customizing the layout of any page UI.
+**Description:** Dedicated tab for managing, customizing, and applying UI/UX templates to the layout of any page UI.
 
 **Requirements:**
 - **Tab Access:** A "Layouts" tab is available in the main navigation or settings.
 - **Page Selection:** Users can select any page (e.g., Board, Notes, Settings) to customize its layout.
 - **Layout Options:** Grid, List, Split View, Sidebar positions, and custom arrangements per page.
-- **Preview:** Live preview of layout changes before applying.
-- **Persistence:** Layout choices persist across sessions and load before first paint.
-- **Reset:** Option to reset layout for any page to default.
-- **Accessibility:** All layout controls are keyboard-accessible and screen reader compatible.
+- **UI/UX Templates:** Store, apply, and manage templates that include font type, color schemes, button styles, spacing, and other visual/interactivity settings.
+- **Template Library:** Built-in and user-defined templates; ability to save, load, import, and export templates.
+- **Preview:** Live preview of layout and template changes before applying.
+- **Persistence:** Layout and template choices persist across sessions and load before first paint.
+- **Reset:** Option to reset layout and UI/UX template for any page to default.
+- **Accessibility:** All layout and template controls are keyboard-accessible and screen reader compatible.
+- **Sharing:** Export/import templates for sharing with other users or devices.
+- **Theme Integration:** Layout management integrates with theme settings for unified appearance and consistent user experience across the app.
+- **Custom CSS Editor:** users can edit and apply custom CSS to fine-tune layouts and templates, with live preview and validation.
 
 **Acceptance Criteria:**
 - "Layouts" tab is visible and accessible from main navigation/settings
-- Users can change layout for any supported page and see live preview
-- Layout changes persist and restore correctly after reload
-- Reset restores default layout instantly
+- Users can change layout and apply UI/UX templates for any supported page and see live preview
+- Layout and template changes persist and restore correctly after reload
+- Reset restores default layout and template instantly
+- Users can save, load, import, and export templates
+- Layout and theme changes are coordinated for unified appearance
+- users can edit and apply custom CSS with live preview
 - All controls meet accessibility standards
