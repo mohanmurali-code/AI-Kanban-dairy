@@ -1,0 +1,181 @@
+/* Dark Dashboard Theme - Classic dark dashboard design */
+.theme-dark-dashboard {
+  --bg-main: #181a20;
+  --bg-sidebar: #15171e;
+  --bg-card: #23263a;
+  --accent: #7c3aed;
+  --accent-light: #a78bfa;
+  --text-main: #f9fafb;
+  --text-muted: #a1a1aa;
+  --text-subtle: #6b7280;
+  --divider: #23263a;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 4px 16px rgba(124, 58, 237, 0.08);
+}
+
+.theme-dark-dashboard {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+/* Cards and Components */
+.theme-dark-dashboard .card,
+.theme-dark-dashboard .kanban-column,
+.theme-dark-dashboard .task-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--divider);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-dark-dashboard .card:hover,
+.theme-dark-dashboard .kanban-column:hover,
+.theme-dark-dashboard .task-card:hover {
+  background: #2d3146;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.theme-dark-dashboard .btn,
+.theme-dark-dashboard .button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.theme-dark-dashboard .btn:hover,
+.theme-dark-dashboard .button:hover {
+  background: var(--accent-light);
+}
+
+.theme-dark-dashboard .btn.secondary,
+.theme-dark-dashboard .button.secondary {
+  background: var(--bg-card);
+  color: var(--accent-light);
+  border: 1px solid var(--accent);
+}
+
+/* Form Elements */
+.theme-dark-dashboard input,
+.theme-dark-dashboard textarea,
+.theme-dark-dashboard select {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: var(--text-main);
+  transition: border-color 0.2s ease;
+}
+
+.theme-dark-dashboard input:focus,
+.theme-dark-dashboard textarea:focus,
+.theme-dark-dashboard select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Navigation */
+.theme-dark-dashboard .nav,
+.theme-dark-dashboard .navigation {
+  background: var(--bg-main);
+  border-bottom: 1px solid var(--divider);
+}
+
+.theme-dark-dashboard .nav-link {
+  color: var(--text-muted);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-dark-dashboard .nav-link:hover,
+.theme-dark-dashboard .nav-link.active {
+  color: var(--accent-light);
+  background: rgba(124, 58, 237, 0.15);
+  font-weight: 600;
+  box-shadow: 0 2px 0 var(--accent-light);
+}
+
+/* Status Indicators */
+.theme-dark-dashboard .status-todo {
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--accent-light);
+}
+
+.theme-dark-dashboard .status-in-progress {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.theme-dark-dashboard .status-done {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+/* Badges */
+.theme-dark-dashboard .badge {
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--accent-light);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  margin-right: 0.5rem;
+}
+
+/* Typography */
+.theme-dark-dashboard h1,
+.theme-dark-dashboard h2,
+.theme-dark-dashboard h3 {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.theme-dark-dashboard h4,
+.theme-dark-dashboard h5,
+.theme-dark-dashboard h6 {
+  font-weight: 600;
+  color: var(--accent-light);
+}
+
+.theme-dark-dashboard p,
+.theme-dark-dashboard span,
+.theme-dark-dashboard li {
+  font-weight: 400;
+  color: var(--text-main);
+}
+
+.theme-dark-dashboard .muted {
+  color: var(--text-subtle);
+}
+
+/* Scrollbar Styling */
+.theme-dark-dashboard ::-webkit-scrollbar {
+  background: var(--bg-card);
+  width: 8px;
+}
+
+.theme-dark-dashboard ::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 8px;
+}
+
+/* Focus Indicators */
+.theme-dark-dashboard :focus {
+  outline: 2px solid var(--accent-light);
+}
+
+/* Transitions */
+.theme-dark-dashboard * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+

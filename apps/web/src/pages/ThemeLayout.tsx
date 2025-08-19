@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { usePreferencesStore } from '../store/theme';
+import { ThemeSelector } from '../components/ThemeSelector';
 
-const themeOptions = [
-  { label: 'Dark Dashboard', value: 'theme-dark-dashboard' },
-  { label: 'Light Simple', value: 'theme-light-simple' },
-  { label: 'Dark Image 1', value: 'theme-dark-img-1' },
-  { label: 'Dark Image 3', value: 'theme-dark-img-3' },
-  { label: 'WebP Layout', value: 'theme-webp-layout' },
-];
+// Theme options are now managed by the ThemeSelector component
 
 const defaultLayouts = [
   { name: 'Grid', value: 'grid' },
@@ -19,7 +14,6 @@ const defaultLayouts = [
 const defaultCSS = `/* Custom CSS here */\n.card { border-radius: 8px; }`;
 
 export default function ThemeLayout() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'theme-dark-dashboard');
   const [selectedLayout, setSelectedLayout] = useState('grid');
   const [customCSS, setCustomCSS] = useState(defaultCSS);
   const {
@@ -38,25 +32,14 @@ export default function ThemeLayout() {
     applyCustomAccentColor,
   } = usePreferencesStore();
 
-  React.useEffect(() => {
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Theme & Layout Settings</h2>
+      
+      {/* New Theme Selector */}
       <div className="rounded-md border p-3">
-        <div className="text-sm opacity-80 mb-2">Theme Selector</div>
-        <select
-          value={theme}
-          onChange={e => setTheme(e.target.value)}
-          className="px-2 py-1 rounded border border-gray-300 bg-[rgb(var(--bg-card))] text-[rgb(var(--text-main))]"
-          aria-label="Select Theme"
-        >
-          {themeOptions.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+        <div className="text-sm opacity-80 mb-2">Theme Selection</div>
+        <ThemeSelector />
       </div>
       <div className="rounded-md border p-3">
         <div className="text-sm opacity-80 mb-2">Accent Color</div>

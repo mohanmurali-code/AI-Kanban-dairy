@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { usePreferencesStore, applyThemeToDocument } from './store/theme'
@@ -13,9 +13,11 @@ import { usePreferencesStore, applyThemeToDocument } from './store/theme'
  * - Mounts the app into the `#root` element.
  */
 
+const Landing = React.lazy(() => import('./pages/Landing'))
 const Kanban = React.lazy(() => import('./pages/Kanban'))
 const Notes = React.lazy(() => import('./pages/Notes'))
 const Tasks = React.lazy(() => import('./pages/Tasks'))
+const Calendar = React.lazy(() => import('./pages/Calendar'))
 const ThemeLayout = React.lazy(() => import('./pages/ThemeLayout'))
 const Settings = React.lazy(() => import('./pages/Settings'))
 
@@ -25,12 +27,14 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <Navigate to="/kanban" replace /> },
+      { index: true, element: <React.Suspense fallback={<div>Loading…</div>}><Landing /></React.Suspense> },
+      { path: 'landing', element: <React.Suspense fallback={<div>Loading…</div>}><Landing /></React.Suspense> },
       { path: 'kanban', element: <React.Suspense fallback={<div>Loading…</div>}><Kanban /></React.Suspense> },
       { path: 'notes', element: <React.Suspense fallback={<div>Loading…</div>}><Notes /></React.Suspense> },
       { path: 'tasks', element: <React.Suspense fallback={<div>Loading…</div>}><Tasks /></React.Suspense> },
-  { path: 'theme-layout', element: <React.Suspense fallback={<div>Loading…</div>}><ThemeLayout /></React.Suspense> },
-  { path: 'settings', element: <React.Suspense fallback={<div>Loading…</div>}><Settings /></React.Suspense> },
+      { path: 'calendar', element: <React.Suspense fallback={<div>Loading…</div>}><Calendar /></React.Suspense> },
+      { path: 'theme-layout', element: <React.Suspense fallback={<div>Loading…</div>}><ThemeLayout /></React.Suspense> },
+      { path: 'settings', element: <React.Suspense fallback={<div>Loading…</div>}><Settings /></React.Suspense> },
     ],
   },
 ])
@@ -43,7 +47,7 @@ function Main() {
   const animations = behavior.animations
 
   useEffect(() => {
-    applyThemeToDocument(theme, accentColor, highContrast)
+    applyThemeToDocument(theme, accentColor, highContrast, appearance.fontFamily)
 
     // Handle prefers-reduced-motion
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')

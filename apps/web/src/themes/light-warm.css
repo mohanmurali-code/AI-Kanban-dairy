@@ -1,0 +1,132 @@
+/* Light Warm Theme - Warm and inviting design */
+.theme-light-warm {
+  --bg-main: #f3f4f6;
+  --bg-sidebar: #e5e7eb;
+  --bg-card: #ffffff;
+  --accent: #f59e42;
+  --accent-light: #fbbf24;
+  --text-main: #22223b;
+  --text-muted: #9a8c98;
+  --text-subtle: #c9ada7;
+  --divider: #e5e7eb;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(251, 191, 36, 0.08);
+}
+
+.theme-light-warm {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Montserrat', 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+/* Cards and Components */
+.theme-light-warm .card,
+.theme-light-warm .kanban-column,
+.theme-light-warm .task-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--divider);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-light-warm .card:hover,
+.theme-light-warm .kanban-column:hover,
+.theme-light-warm .task-card:hover {
+  background: #fbbf24;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.theme-light-warm .btn,
+.theme-light-warm .button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.theme-light-warm .btn:hover,
+.theme-light-warm .button:hover {
+  background: var(--accent-light);
+}
+
+/* Form Elements */
+.theme-light-warm input,
+.theme-light-warm textarea,
+.theme-light-warm select {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: var(--text-main);
+  transition: border-color 0.2s ease;
+}
+
+.theme-light-warm input:focus,
+.theme-light-warm textarea:focus,
+.theme-light-warm select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Navigation */
+.theme-light-warm .nav,
+.theme-light-warm .navigation {
+  background: var(--bg-main);
+  border-bottom: 1px solid var(--divider);
+}
+
+.theme-light-warm .nav-link {
+  color: var(--text-muted);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-light-warm .nav-link:hover,
+.theme-light-warm .nav-link.active {
+  color: var(--accent);
+  background: rgba(251, 191, 36, 0.12);
+  font-weight: 600;
+  box-shadow: 0 2px 0 var(--accent);
+}
+
+/* Status Indicators */
+.theme-light-warm .status-todo {
+  background: rgba(251, 191, 36, 0.12);
+  color: var(--accent);
+}
+
+.theme-light-warm .status-in-progress {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+
+.theme-light-warm .status-done {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+/* Badges */
+.theme-light-warm .badge {
+  background: rgba(251, 191, 36, 0.12);
+  color: var(--accent);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  margin-right: 0.5rem;
+}
+
+/* Transitions */
+.theme-light-warm * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+

@@ -94,4 +94,148 @@
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 9999px;
   }
+
+  /* Modal Components */
+  .theme-modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .theme-modal-bg {
+    background-color: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
+    border-radius: var(--radius-lg);
+  }
+
+  .theme-modal-border {
+    border-color: rgb(var(--border));
+  }
+
+  .theme-modal-shadow {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .theme-modal-header-border {
+    border-bottom: 1px solid rgb(var(--border));
+  }
+
+  .theme-modal-title {
+    color: rgb(var(--fg));
+    font-weight: 600;
+  }
+
+  .theme-modal-close {
+    @apply p-1 rounded-md transition-colors;
+    color: rgb(var(--fg-muted));
+    background-color: transparent;
+  }
+
+  .theme-modal-close:hover {
+    background-color: rgb(var(--surface-2));
+    color: rgb(var(--fg));
+  }
+
+  /* Form Components */
+  .theme-label {
+    color: rgb(var(--fg));
+    font-weight: 500;
+  }
+
+  .theme-input-bg {
+    background-color: rgb(var(--surface-2));
+  }
+
+  .theme-input-border {
+    border: 1px solid rgb(var(--border));
+  }
+
+  .theme-input-text {
+    color: rgb(var(--fg));
+  }
+
+  .theme-input-focus {
+    border-color: rgb(var(--primary));
+    box-shadow: 0 0 0 2px rgba(var(--primary), 0.2);
+  }
+
+  .theme-input-error {
+    border-color: rgb(239, 68, 68);
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+
+  .theme-error-text {
+    color: rgb(239, 68, 68);
+  }
+
+  .theme-text-secondary {
+    color: rgb(var(--fg-muted));
+  }
+
+  /* Button Components */
+  .theme-btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700;
+    background-color: rgb(var(--primary));
+    border-color: rgb(var(--primary));
+    color: white;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .theme-btn-primary:hover {
+    background-color: rgb(var(--primary));
+    filter: brightness(0.9);
+  }
+
+  .theme-btn-secondary {
+    @apply bg-gray-600 hover:bg-gray-700 text-white border-gray-600 hover:border-gray-700;
+    background-color: rgb(var(--surface-2));
+    border-color: rgb(var(--border));
+    color: rgb(var(--fg));
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .theme-btn-secondary:hover {
+    background-color: rgb(var(--surface));
+    border-color: rgb(var(--border));
+  }
+
+  .theme-btn-cancel {
+    @apply bg-transparent hover:bg-gray-100 text-gray-700 border-gray-300 hover:border-gray-400;
+    background-color: transparent;
+    border-color: rgb(var(--border));
+    color: rgb(var(--fg-muted));
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .theme-btn-cancel:hover {
+    background-color: rgb(var(--surface-2));
+    color: rgb(var(--fg));
+  }
+
+  /* Focus Management */
+  .theme-focus-ring {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* High Contrast Mode Adjustments */
+  :root[data-theme='high-contrast'] .theme-modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  :root[data-theme='high-contrast'] .theme-input-focus {
+    border-color: rgb(var(--primary));
+    box-shadow: 0 0 0 3px rgb(var(--primary));
+  }
 }

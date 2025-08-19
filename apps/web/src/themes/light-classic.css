@@ -1,0 +1,132 @@
+/* Light Classic Theme - Simple and clean design */
+.theme-light-classic {
+  --bg-main: #f7fafc;
+  --bg-sidebar: #f1f5f9;
+  --bg-card: #ffffff;
+  --accent: #2563eb;
+  --accent-light: #60a5fa;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --divider: #e2e8f0;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 16px rgba(37, 99, 235, 0.08);
+}
+
+.theme-light-classic {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+/* Cards and Components */
+.theme-light-classic .card,
+.theme-light-classic .kanban-column,
+.theme-light-classic .task-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--divider);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-light-classic .card:hover,
+.theme-light-classic .kanban-column:hover,
+.theme-light-classic .task-card:hover {
+  background: #f1f5f9;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.theme-light-classic .btn,
+.theme-light-classic .button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.theme-light-classic .btn:hover,
+.theme-light-classic .button:hover {
+  background: var(--accent-light);
+}
+
+/* Form Elements */
+.theme-light-classic input,
+.theme-light-classic textarea,
+.theme-light-classic select {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: var(--text-main);
+  transition: border-color 0.2s ease;
+}
+
+.theme-light-classic input:focus,
+.theme-light-classic textarea:focus,
+.theme-light-classic select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Navigation */
+.theme-light-classic .nav,
+.theme-light-classic .navigation {
+  background: var(--bg-main);
+  border-bottom: 1px solid var(--divider);
+}
+
+.theme-light-classic .nav-link {
+  color: var(--text-muted);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-light-classic .nav-link:hover,
+.theme-light-classic .nav-link.active {
+  color: var(--accent);
+  background: rgba(37, 99, 235, 0.08);
+  font-weight: 600;
+  box-shadow: 0 2px 0 var(--accent);
+}
+
+/* Status Indicators */
+.theme-light-classic .status-todo {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--accent);
+}
+
+.theme-light-classic .status-in-progress {
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+}
+
+.theme-light-classic .status-done {
+  background: rgba(34, 197, 94, 0.08);
+  color: #16a34a;
+}
+
+/* Badges */
+.theme-light-classic .badge {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--accent);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  margin-right: 0.5rem;
+}
+
+/* Transitions */
+.theme-light-classic * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
