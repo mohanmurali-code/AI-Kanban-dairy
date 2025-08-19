@@ -1,485 +1,416 @@
-# Enhanced Theme System Guide
-
-This guide explains how to use the robust theme system in the Kanban Diary application. The theme system has been enhanced with error handling, performance optimizations, accessibility features, and comprehensive validation.
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Core Components](#core-components)
-3. [Theme Store](#theme-store)
-4. [Theme Provider](#theme-provider)
-5. [Theme Utilities](#theme-utilities)
-6. [Theme Components](#theme-components)
-7. [Best Practices](#best-practices)
-8. [Troubleshooting](#troubleshooting)
+# Theme System Guide
 
 ## Overview
 
-The enhanced theme system provides:
+The AI Kanban Diary application features a comprehensive, well-organized theme system with **10 professionally designed themes** organized into logical categories. This guide provides complete documentation for developers and users.
 
-- **Robust Error Handling**: Graceful fallbacks and error recovery
-- **Performance Optimizations**: Caching and memoization for better performance
-- **Accessibility Compliance**: WCAG AA/AAA contrast validation
-- **Type Safety**: Full TypeScript support with proper interfaces
-- **Theme Validation**: Comprehensive validation with detailed feedback
-- **System Integration**: Automatic system theme detection and switching
+## Theme Categories
 
-## Core Components
+### 🌟 Light Themes
+Clean, bright designs perfect for daytime use and professional environments.
 
-### 1. Theme Store (`store/theme.ts`)
+### 🌙 Dark Themes  
+Sophisticated dark designs ideal for low-light conditions and modern aesthetics.
 
-The central state management for theme preferences using Zustand with persistence.
+### 🎨 Special Themes
+Unique designs with distinctive characteristics for specific use cases.
 
-```typescript
-import { usePreferencesStore } from '../store/theme'
+### ♿ Accessibility Themes
+WCAG compliant themes designed for maximum accessibility and readability.
 
-// Access theme state
-const { appearance, setTheme, setAccentColor } = usePreferencesStore()
+## Complete Theme List
 
-// Change theme
-await setTheme('dark')
+### Light Themes
 
-// Change accent color
-setAccentColor('#6366f1')
+#### 1. **Light Modern** (`theme-light-modern`)
+- **File**: `light-modern.css`
+- **Description**: Clean and contemporary design with subtle shadows
+- **Accent Color**: Indigo (#6366f1)
+- **Best For**: Professional work, modern interfaces
+- **Features**: Subtle shadows, smooth transitions, indigo accents
+
+#### 2. **Light Classic** (`theme-light-classic`)
+- **File**: `light-classic.css`
+- **Description**: Simple and clean light theme with blue accents
+- **Accent Color**: Blue (#2563eb)
+- **Best For**: Traditional interfaces, business applications
+- **Features**: Clean lines, blue accents, minimal design
+
+#### 3. **Light Warm** (`theme-light-warm`)
+- **File**: `light-warm.css`
+- **Description**: Warm and inviting design with amber accents
+- **Accent Color**: Amber (#f59e42)
+- **Best For**: Personal use, creative applications
+- **Features**: Warm tones, rounded corners, amber accents
+
+### Dark Themes
+
+#### 4. **Dark Elegant** (`theme-dark-elegant`)
+- **File**: `dark-elegant.css`
+- **Description**: Sophisticated dark theme with cyan accents and glassmorphism
+- **Accent Color**: Cyan (#00d4ff)
+- **Best For**: Premium applications, modern aesthetics
+- **Features**: Glassmorphism effects, advanced animations, cyan accents
+
+#### 5. **Dark Dashboard** (`theme-dark-dashboard`)
+- **File**: `dark-dashboard.css`
+- **Description**: Classic dark dashboard theme with purple accents
+- **Accent Color**: Purple (#7c3aed)
+- **Best For**: Dashboard applications, data visualization
+- **Features**: Classic dark design, purple accents, professional look
+
+#### 6. **Dark Crimson** (`theme-dark-crimson`)
+- **File**: `dark-crimson.css`
+- **Description**: Bold and energetic dark theme with crimson accents
+- **Accent Color**: Crimson (#e11d48)
+- **Best For**: Creative applications, bold interfaces
+- **Features**: High energy, crimson accents, bold design
+
+#### 7. **Dark Emerald** (`theme-dark-emerald`)
+- **File**: `dark-emerald.css`
+- **Description**: Fresh and vibrant dark theme with emerald accents
+- **Accent Color**: Emerald (#10b981)
+- **Best For**: Nature-inspired applications, fresh interfaces
+- **Features**: Natural colors, emerald accents, vibrant design
+
+### Special Themes
+
+#### 8. **Special Cozy** (`theme-special-cozy`)
+- **File**: `special-cozy.css`
+- **Description**: Comfortable and inviting design with warm tones
+- **Accent Color**: Orange (#d97706)
+- **Best For**: Personal applications, comfort-focused interfaces
+- **Features**: Rounded elements, warm colors, comfort-focused design
+
+### Accessibility Themes
+
+#### 9. **High Contrast** (`theme-accessibility-high-contrast`)
+- **File**: `accessibility-high-contrast.css`
+- **Description**: WCAG compliant high contrast theme
+- **Accent Color**: Yellow (#ffff00)
+- **Best For**: Accessibility compliance, maximum readability
+- **Features**: High contrast, large text, clear focus indicators
+
+## File Structure
+
+```
+apps/web/src/themes/
+├── index.css                           # Theme index and utilities
+├── 
+├── light-modern.css                    # Light modern theme
+├── light-classic.css                   # Light classic theme
+├── light-warm.css                      # Light warm theme
+├── 
+├── dark-elegant.css                    # Dark elegant theme
+├── dark-dashboard.css                  # Dark dashboard theme
+├── dark-crimson.css                    # Dark crimson theme
+├── dark-emerald.css                    # Dark emerald theme
+├── 
+├── special-cozy.css                    # Special cozy theme
+├── 
+├── accessibility-high-contrast.css     # High contrast theme
+├── 
+├── README.md                           # Theme documentation
+├── THEME_REFACTOR_SUMMARY.md          # Refactoring summary
+└── THEME_SYSTEM_GUIDE.md              # This guide
 ```
 
-**Key Features:**
-- Async theme switching with error handling
-- Automatic persistence to localStorage
-- Version migration support
-- Performance tracking
-- Error state management
+## CSS Custom Properties
 
-### 2. Theme Provider (`components/ThemeProvider.tsx`)
+Each theme follows a consistent structure using CSS custom properties:
 
-Provides theme context and handles initialization.
-
-```typescript
-import { ThemeProvider, useTheme } from './components/ThemeProvider'
-
-// Wrap your app
-<ThemeProvider>
-  <App />
-</ThemeProvider>
-
-// Use in components
-const { themeStatus, lastError, retryTheme } = useTheme()
-```
-
-**Components:**
-- `ThemeProvider`: Main provider component
-- `ThemeErrorBoundary`: Error display and recovery
-- `ThemeLoading`: Loading state component
-- `ThemeStatusIndicator`: Development status indicator
-
-### 3. Theme Utilities (`utils/themeUtils.ts`)
-
-Helper functions for theme management and validation.
-
-```typescript
-import { 
-  useThemeStyles, 
-  validateThemeColors, 
-  generateColorVariants 
-} from '../utils/themeUtils'
-
-// Get theme-aware styles
-const styles = useThemeStyles()
-
-// Validate theme colors
-const validation = validateThemeColors(colors)
-
-// Generate color variants
-const variants = generateColorVariants('#6366f1')
-```
-
-## Theme Store
-
-### State Structure
-
-```typescript
-interface PreferencesState {
-  version: number
-  appearance: {
-    theme: 'light' | 'dark' | 'system' | 'high-contrast'
-    highContrast: boolean
-    accentColor: string
-    fontFamily: 'system-ui' | 'serif' | 'monospace'
-    fontSize: 'S' | 'M' | 'L' | 'XL'
-    lineSpacing: 'normal' | 'comfortable' | 'relaxed'
-    reducedMotion: 'system' | 'on' | 'off'
-  }
-  layout: {
-    sidebar: 'left' | 'right'
-    boardDensity: 'compact' | 'cozy' | 'comfortable'
-    cardSize: 'S' | 'M' | 'L'
-  }
-  notifications: {
-    dueReminders: { enabled: boolean; lead: '5m' | '15m' | '1h' | '1d' }
-    completion: { enabled: boolean }
-    quietHours: { enabled: boolean; from: string; to: string }
-  }
-  behavior: {
-    undoWindowSec: number
-    animations: 'system' | 'on' | 'off'
-  }
-  // Theme application state
-  themeStatus: 'idle' | 'loading' | 'success' | 'error'
-  lastError?: ThemeError
-  lastAppliedTheme?: ThemeMode
-  themeLoadTime?: number
+```css
+.theme-[name] {
+  /* Background Colors */
+  --bg-main: #ffffff;           /* Main background */
+  --bg-sidebar: #f5f5f5;        /* Sidebar background */
+  --bg-card: #ffffff;           /* Card background */
+  
+  /* Text Colors */
+  --text-main: #1f2937;         /* Primary text */
+  --text-muted: #6b7280;        /* Secondary text */
+  --text-subtle: #9ca3af;       /* Subtle text */
+  
+  /* Accent Colors */
+  --accent: #6366f1;            /* Primary accent */
+  --accent-light: #818cf8;      /* Light accent */
+  
+  /* Utility Colors */
+  --divider: #e5e7eb;           /* Dividers and borders */
+  --shadow: 0 1px 3px rgba(0,0,0,0.1); /* Default shadow */
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1); /* Large shadow */
 }
 ```
 
-### Actions
+## Theme Implementation
 
-```typescript
-// Theme switching
-await setTheme('dark')
+### Basic Usage
 
-// Color customization
-setAccentColor('#6366f1')
-setHighContrast(true)
-
-// Typography
-setFontFamily('serif')
-setFontSize('L')
-setLineSpacing('comfortable')
-
-// Layout
-setSidebarPosition('right')
-setBoardDensity('cozy')
-setCardSize('M')
-
-// Error handling
-clearThemeError()
-await retryThemeApplication()
-```
-
-## Theme Provider
-
-### Usage
-
-```typescript
-import { ThemeProvider, ThemeErrorBoundary } from './components/ThemeProvider'
-
-function App() {
-  return (
-    <ThemeProvider>
-      <ThemeErrorBoundary>
-        <YourAppContent />
-      </ThemeErrorBoundary>
-    </ThemeProvider>
-  )
-}
-```
-
-### Hook Usage
-
-```typescript
-import { useTheme } from './components/ThemeProvider'
+```tsx
+import React from 'react';
+import { useTheme } from '../utils/themeManager';
 
 function MyComponent() {
-  const { 
-    isInitialized, 
-    themeStatus, 
-    lastError, 
-    retryTheme, 
-    clearError 
-  } = useTheme()
-
-  if (!isInitialized) {
-    return <div>Loading theme...</div>
-  }
-
-  if (themeStatus === 'error') {
-    return (
-      <div>
-        <p>Theme error: {lastError?.message}</p>
-        <button onClick={retryTheme}>Retry</button>
-      </div>
-    )
-  }
-
-  return <div>Your content</div>
-}
-```
-
-## Theme Utilities
-
-### Color Management
-
-```typescript
-// Convert hex to RGB
-const rgb = hexToRgb('#6366f1') // [99, 107, 241]
-
-// Convert RGB to hex
-const hex = rgbToHex(99, 107, 241) // '#6366f1'
-
-// Calculate contrast ratio
-const ratio = calculateContrastRatio('#000000', '#ffffff') // 21.0
-
-// Validate contrast
-const validation = validateContrast('#000000', '#ffffff', 'AA')
-// { isValid: true, ratio: 21.0, required: 4.5 }
-```
-
-### Color Variants
-
-```typescript
-// Generate accessible variants
-const variants = generateColorVariants('#6366f1', {
-  lightness: 0.1,
-  saturation: 0.1,
-  alpha: 0.8
-})
-
-// Result:
-// {
-//   light: '#818cf8',
-//   dark: '#4f46e5',
-//   muted: '#6366f1',
-//   alpha: 'rgba(99, 107, 241, 0.8)'
-// }
-```
-
-### Theme Validation
-
-```typescript
-// Validate theme colors
-const validation = validateThemeColors({
-  bg: '#ffffff',
-  surface: '#f3f4f6',
-  fg: '#000000',
-  primary: '#6366f1'
-})
-
-// Result:
-// {
-//   isValid: true,
-//   errors: [],
-//   warnings: [],
-//   suggestions: ['Theme meets accessibility standards'],
-//   accessibility: {
-//     aaCompliant: true,
-//     aaaCompliant: true,
-//     contrastIssues: []
-//   }
-// }
-```
-
-### Theme Styles Hook
-
-```typescript
-import { useThemeStyles } from '../utils/themeUtils'
-
-function MyComponent() {
-  const styles = useThemeStyles()
-
+  const { currentTheme, setTheme } = useTheme();
+  
   return (
-    <div className={styles.bg.surface}>
-      <h1 className={styles.text.primary}>Title</h1>
-      <p className={styles.text.secondary}>Description</p>
-      <button className={styles.interactive.hover}>
-        Click me
+    <div className={`theme-container ${currentTheme}`}>
+      <h1>Welcome to AI Kanban Diary</h1>
+      <button onClick={() => setTheme('theme-light-modern')}>
+        Switch to Light Modern
       </button>
     </div>
-  )
+  );
 }
 ```
 
-## Theme Components
+### Theme Switching
 
-### ThemeAwareCard
+```tsx
+// Switch to a specific theme
+setTheme('theme-dark-elegant');
 
-```typescript
-import { ThemeAwareCard } from './components/ThemeAwareCard'
+// Get current theme
+const currentTheme = getCurrentTheme();
 
-function MyComponent() {
-  return (
-    <ThemeAwareCard
-      variant="elevated"
-      size="lg"
-      title="Card Title"
-      subtitle="Card subtitle"
-      badge="New"
-      badgeVariant="success"
-    >
-      Card content goes here
-    </ThemeAwareCard>
-  )
+// Get theme configuration
+const themeConfig = getThemeConfig('theme-light-warm');
+```
+
+## Component Styling
+
+### Cards and Containers
+
+```css
+/* All themes support these component classes */
+.card, .kanban-column, .task-card {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
 }
 ```
 
-### ThemeSelector
+### Buttons
 
-```typescript
-import { ThemeSelector, SimpleThemeSelector } from './components/ThemeSelector'
-
-// Full theme selector
-<ThemeSelector />
-
-// Simple theme selector
-<SimpleThemeSelector />
+```css
+/* Button styling across all themes */
+.btn, .button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 ```
 
-### ThemeValidator
+### Form Elements
 
+```css
+/* Form element styling */
+input, textarea, select {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: var(--text-main);
+  transition: border-color 0.2s ease;
+}
+```
+
+## Accessibility Features
+
+### High Contrast Support
+- All themes support high contrast mode
+- WCAG AA compliance for color contrast
+- Clear focus indicators
+
+### Reduced Motion
+- Respects `prefers-reduced-motion` preference
+- Smooth transitions can be disabled
+
+### Screen Reader Support
+- Semantic HTML structure
+- Proper ARIA labels
+- Logical tab order
+
+## Performance Optimizations
+
+### CSS Custom Properties
+- Efficient theme switching
+- No JavaScript re-rendering required
+- Hardware-accelerated transitions
+
+### Minimal JavaScript
+- Lightweight theme management
+- Local storage persistence
+- Event-driven architecture
+
+## Browser Support
+
+- **Modern Browsers**: Full support (Chrome 88+, Firefox 87+, Safari 14+)
+- **CSS Custom Properties**: IE11+ with polyfill
+- **Grid Layout**: IE11+ with polyfill
+- **Flexbox**: IE10+ with polyfill
+
+## Migration from Legacy Themes
+
+### Old Theme Names → New Theme Names
+
+| Old Name | New Name | Category |
+|----------|----------|----------|
+| `modern-minimal` | `light-modern` | Light |
+| `light-simple` | `light-classic` | Light |
+| `webp-layout` | `light-warm` | Light |
+| `dark-img-1` | `dark-crimson` | Dark |
+| `dark-img-3` | `dark-emerald` | Dark |
+| `warm-cozy` | `special-cozy` | Special |
+| `high-contrast` | `accessibility-high-contrast` | Accessibility |
+
+### Migration Steps
+
+1. **Update CSS Classes**: Replace old theme class names with new ones
+2. **Update Theme IDs**: Use new theme IDs in theme manager calls
+3. **Test Functionality**: Verify all themes work correctly
+4. **Update Documentation**: Reference new theme names
+
+## Adding New Themes
+
+### 1. Create CSS File
+```css
+/* themes/new-theme.css */
+.theme-new-theme {
+  --bg-main: #ffffff;
+  --bg-sidebar: #f5f5f5;
+  --bg-card: #ffffff;
+  --accent: #your-color;
+  /* ... other properties */
+}
+```
+
+### 2. Add to Index
+```css
+/* themes/index.css */
+@import './new-theme.css';
+```
+
+### 3. Register in Theme Manager
 ```typescript
-import { ThemeValidator } from './components/ThemeValidator'
-
-// Development tool for theme validation
-<ThemeValidator />
+// utils/themeManager.ts
+export const AVAILABLE_THEMES: ThemeConfig[] = [
+  // ... existing themes
+  {
+    id: 'theme-new-theme',
+    name: 'New Theme',
+    description: 'Description of the new theme',
+    category: 'light', // or 'dark', 'accessibility', 'special'
+    accentColor: '#your-color',
+    preview: {
+      bgMain: '#ffffff',
+      bgCard: '#ffffff',
+      textMain: '#000000',
+      accent: '#your-color'
+    }
+  }
+];
 ```
 
 ## Best Practices
 
-### 1. Error Handling
+### Design Principles
+1. **Consistency**: Follow established patterns
+2. **Accessibility**: Ensure WCAG compliance
+3. **Performance**: Use efficient CSS properties
+4. **Maintainability**: Keep code organized and documented
 
-Always handle theme errors gracefully:
+### CSS Guidelines
+1. **Use CSS Custom Properties**: For theme-specific values
+2. **Consistent Naming**: Follow established conventions
+3. **Responsive Design**: Support all screen sizes
+4. **Browser Compatibility**: Test across major browsers
 
-```typescript
-try {
-  await setTheme('dark')
-} catch (error) {
-  console.error('Theme switching failed:', error)
-  // Show user-friendly error message
-  showNotification('Failed to switch theme. Please try again.')
-}
-```
-
-### 2. Performance Optimization
-
-Use memoization for expensive theme operations:
-
-```typescript
-import { useMemo } from 'react'
-
-function MyComponent() {
-  const styles = useThemeStyles()
-  
-  const expensiveComputation = useMemo(() => {
-    // Expensive theme-related computation
-    return computeThemeStyles(styles)
-  }, [styles])
-}
-```
-
-### 3. Accessibility
-
-Always validate contrast ratios:
-
-```typescript
-import { validateContrast } from '../utils/themeUtils'
-
-const validation = validateContrast(textColor, backgroundColor, 'AA')
-if (!validation.isValid) {
-  console.warn('Insufficient contrast ratio')
-}
-```
-
-### 4. Type Safety
-
-Use proper TypeScript types:
-
-```typescript
-import { type ThemeMode, type ThemeError } from '../store/theme'
-
-function handleThemeChange(theme: ThemeMode) {
-  // Type-safe theme handling
-}
-```
-
-### 5. System Integration
-
-Respect user's system preferences:
-
-```typescript
-// Use 'system' theme to follow OS settings
-await setTheme('system')
-
-// Listen for system theme changes
-const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-mediaQuery.addEventListener('change', handleSystemThemeChange)
-```
+### Theme Development
+1. **Start with Base**: Use existing theme as template
+2. **Test Thoroughly**: Verify across all components
+3. **Document Changes**: Update this guide
+4. **Performance Test**: Ensure smooth switching
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Theme not applying**
-   - Check if ThemeProvider is wrapping your app
-   - Verify CSS variables are defined in index.css
-   - Check browser console for errors
+#### Theme Not Switching
+- Check theme ID matches exactly
+- Verify CSS file is imported
+- Check browser console for errors
 
-2. **Performance issues**
-   - Clear theme cache: `clearThemeCache()`
-   - Check for memory leaks in theme components
-   - Use React DevTools to profile re-renders
+#### Styling Not Applied
+- Ensure component has theme class
+- Check CSS specificity
+- Verify CSS custom properties are defined
 
-3. **Accessibility warnings**
-   - Run ThemeValidator component
-   - Check contrast ratios manually
-   - Use browser accessibility tools
-
-4. **Persistence issues**
-   - Check localStorage quota
-   - Verify migration logic for version updates
-   - Clear localStorage and reset to defaults
+#### Performance Issues
+- Reduce transition complexity
+- Use `will-change` sparingly
+- Optimize CSS selectors
 
 ### Debug Tools
 
-```typescript
-// Enable development status indicator
-<ThemeStatusIndicator />
+#### Theme Inspector
+```javascript
+// Check current theme
+console.log(getCurrentTheme());
 
-// Validate current theme
-<ThemeValidator />
+// List all themes
+console.log(AVAILABLE_THEMES);
 
-// Export theme for debugging
-const themeExport = exportTheme('Current Theme')
-console.log(themeExport)
+// Check theme configuration
+console.log(getThemeConfig('theme-light-modern'));
 ```
 
-### Error Recovery
-
-```typescript
-// Clear theme error
-clearThemeError()
-
-// Retry theme application
-await retryThemeApplication()
-
-// Reset to defaults
-resetToDefaults()
+#### CSS Debugging
+```css
+/* Add to theme for debugging */
+.theme-debug * {
+  outline: 1px solid red;
+}
 ```
 
-## Migration Guide
+## Future Enhancements
 
-### From Version 1 to 2
+### Planned Features
+- **Theme Customization**: User-defined modifications
+- **Theme Sharing**: Export/import custom themes
+- **Advanced Previews**: More detailed theme previews
+- **Theme Analytics**: Usage statistics and preferences
 
-The theme system has been enhanced with new features. Existing themes will be automatically migrated:
+### Technical Improvements
+- **CSS-in-JS**: Consider CSS-in-JS for dynamic themes
+- **Theme Builder**: Visual theme creation tool
+- **Performance Monitoring**: Theme switching metrics
+- **Automated Testing**: Theme validation and testing
 
-1. **New fields added**: `themeStatus`, `lastError`, `lastAppliedTheme`, `themeLoadTime`
-2. **Enhanced error handling**: All theme operations now return promises
-3. **Performance improvements**: Caching and memoization added
-4. **Better accessibility**: Enhanced contrast validation
+## Support and Resources
 
-### Breaking Changes
+### Documentation
+- **This Guide**: Complete theme system documentation
+- **Theme Examples**: See individual theme files
+- **Component Library**: Check component implementations
 
-- `setTheme()` now returns a Promise
-- New required CSS variables for enhanced features
-- Theme validation is more strict
+### Development
+- **Theme Manager**: Core theme management utility
+- **Theme Selector**: UI component for theme selection
+- **Migration Tools**: Utilities for legacy theme conversion
 
-### Migration Steps
+### Community
+- **GitHub Issues**: Report bugs and request features
+- **Discussions**: Share themes and get help
+- **Contributions**: Submit new themes and improvements
 
-1. Update your App component to use ThemeProvider
-2. Handle async theme operations
-3. Add error boundaries for theme errors
-4. Update CSS variables if needed
+---
 
-## Conclusion
-
-The enhanced theme system provides a robust, performant, and accessible foundation for theming in the Kanban Diary application. By following the best practices outlined in this guide, you can create reliable and user-friendly theme experiences.
-
-For more information, see the individual component documentation and the theme utilities reference.
+*This guide covers the complete theme system. For specific implementation details, refer to individual theme files and the theme manager utility.*

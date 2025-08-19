@@ -30,7 +30,7 @@ const themeOptions: ThemeOption[] = [
     description: 'Clean and bright interface',
     icon: '☀️',
     preview: {
-      bg: '#f3f4f6',
+      bg: '#fafafa',
       surface: '#ffffff',
       primary: '#6366f1'
     }
@@ -41,8 +41,8 @@ const themeOptions: ThemeOption[] = [
     description: 'Easy on the eyes',
     icon: '🌙',
     preview: {
-      bg: '#0e1420',
-      surface: '#1a2332',
+      bg: '#0f172a',
+      surface: '#1e293b',
       primary: '#63b3ed'
     }
   },
@@ -52,7 +52,7 @@ const themeOptions: ThemeOption[] = [
     description: 'Follows your device settings',
     icon: '⚙️',
     preview: {
-      bg: '#f3f4f6',
+      bg: '#fafafa',
       surface: '#ffffff',
       primary: '#6366f1'
     }
@@ -100,143 +100,144 @@ export function ThemeSelector() {
     await retryTheme()
   }, [retryTheme])
 
+  // Predefined accent colors
+  const accentColors = [
+    '#7c3aed', '#ef4444', '#f97316', '#eab308', '#22c55e',
+    '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'
+  ]
+
+  if (themeStatus === 'error' && lastError) {
+    return (
+      <div className="bg-[rgb(var(--error))] bg-opacity-10 border border-[rgb(var(--error))] rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[rgb(var(--error))]">⚠️</span>
+          <span className="font-medium text-[rgb(var(--fg))]">Theme Error</span>
+        </div>
+        <p className="text-sm text-[rgb(var(--fg-muted))] mb-3">
+          {lastError.message}
+        </p>
+        <button
+          onClick={handleRetry}
+          className="px-3 py-1 bg-[rgb(var(--error))] text-white rounded text-sm hover:opacity-90 transition-opacity"
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      {/* Theme Status */}
-      {themeStatus === 'error' && lastError && (
-        <ThemeAwareCard variant="subtle" className="border-[rgb(var(--error))] bg-[rgb(var(--error))] bg-opacity-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-[rgb(var(--error))]">Theme Error</h3>
-              <p className="text-sm text-[rgb(var(--fg-muted))]">{lastError.message}</p>
-            </div>
-            <button
-              onClick={handleRetry}
-              className="px-3 py-1 text-sm bg-[rgb(var(--error))] text-white rounded hover:opacity-90 transition-opacity"
-            >
-              Retry
-            </button>
-          </div>
-        </ThemeAwareCard>
-      )}
-
-      {/* Theme Options */}
-      <div>
-        <h3 className="text-lg font-semibold text-[rgb(var(--fg))] mb-4">Theme</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Theme Mode Selection */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-medium text-[rgb(var(--fg))]">Theme Mode</h3>
+        <div className="grid grid-cols-2 gap-3">
           {themeOptions.map((option) => (
-            <ThemeAwareCard
+            <button
               key={option.id}
-              variant={appearance.theme === option.id ? 'elevated' : 'interactive'}
-              className={`relative ${appearance.theme === option.id ? 'ring-2 ring-[rgb(var(--primary))]' : ''}`}
               onClick={() => handleThemeChange(option.id)}
+              disabled={isChanging}
+              className={`relative p-4 rounded-lg border-2 transition-all ${
+                appearance.theme === option.id
+                  ? 'border-[rgb(var(--primary))] bg-[rgb(var(--primary))] bg-opacity-10'
+                  : 'border-[rgb(var(--border))] hover:border-[rgb(var(--primary))] hover:bg-[rgb(var(--surface-2))]'
+              } ${isChanging ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center gap-3">
-                <div className="text-2xl">{option.icon}</div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-[rgb(var(--fg))]">{option.name}</h4>
-                  <p className="text-sm text-[rgb(var(--fg-muted))]">{option.description}</p>
+                <span className="text-2xl">{option.icon}</span>
+                <div className="text-left">
+                  <div className="font-medium text-[rgb(var(--fg))]">{option.name}</div>
+                  <div className="text-sm text-[rgb(var(--fg-muted))]">{option.description}</div>
                 </div>
-                {appearance.theme === option.id && (
-                  <div className="w-2 h-2 bg-[rgb(var(--primary))] rounded-full"></div>
-                )}
               </div>
               
               {/* Theme Preview */}
               <div className="mt-3 flex gap-1">
-                <div 
+                <div
                   className="w-4 h-4 rounded border border-[rgb(var(--border))]"
                   style={{ backgroundColor: option.preview.bg }}
-                ></div>
-                <div 
+                />
+                <div
                   className="w-4 h-4 rounded border border-[rgb(var(--border))]"
                   style={{ backgroundColor: option.preview.surface }}
-                ></div>
-                <div 
+                />
+                <div
                   className="w-4 h-4 rounded border border-[rgb(var(--border))]"
                   style={{ backgroundColor: option.preview.primary }}
-                ></div>
+                />
               </div>
-            </ThemeAwareCard>
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Accent Color */}
-      <div>
-        <h3 className="text-lg font-semibold text-[rgb(var(--fg))] mb-4">Accent Color</h3>
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <input
-              type="color"
-              value={customColor}
-              onChange={(e) => handleAccentColorChange(e.target.value)}
-              className="w-12 h-12 rounded border border-[rgb(var(--border))] cursor-pointer"
-              disabled={isChanging}
+      {/* Accent Color Selection */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-medium text-[rgb(var(--fg))]">Accent Color</h3>
+        <div className="grid grid-cols-5 gap-2">
+          {accentColors.map((color) => (
+            <button
+              key={color}
+              onClick={() => handleAccentColorChange(color)}
+              className={`w-full h-10 rounded-md border-2 transition-all ${
+                appearance.accentColor === color
+                  ? 'border-[rgb(var(--fg))] scale-110'
+                  : 'border-transparent hover:border-[rgb(var(--border))]'
+              }`}
+              style={{ backgroundColor: color }}
+              title={color}
             />
-            <input
-              type="text"
-              value={customColor}
-              onChange={(e) => handleAccentColorChange(e.target.value)}
-              placeholder="#6366f1"
-              className="flex-1 px-3 py-2 border border-[rgb(var(--border))] rounded bg-[rgb(var(--surface-2))] text-[rgb(var(--fg))]"
-              disabled={isChanging}
-            />
-          </div>
-          
-          {/* Preset Colors */}
-          <div className="flex gap-2">
-            {['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'].map((color) => (
-              <button
-                key={color}
-                onClick={() => handleAccentColorChange(color)}
-                className="w-8 h-8 rounded border-2 border-[rgb(var(--border))] hover:border-[rgb(var(--primary))] transition-colors"
-                style={{ backgroundColor: color }}
-                disabled={isChanging}
-                aria-label={`Select ${color} as accent color`}
-              ></button>
-            ))}
-          </div>
+          ))}
+        </div>
+        
+        {/* Custom Color Input */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            className="flex-1 px-3 py-2 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] text-[rgb(var(--fg))] focus:border-[rgb(var(--primary))] focus:outline-none"
+            placeholder="Custom HEX color (e.g., #RRGGBB)"
+            value={customColor}
+            onChange={(e) => setCustomColor(e.target.value)}
+            onBlur={() => handleAccentColorChange(customColor)}
+          />
+          <button
+            onClick={() => handleAccentColorChange(customColor)}
+            className="px-4 py-2 bg-[rgb(var(--primary))] text-white rounded-md hover:opacity-90 transition-opacity"
+          >
+            Apply
+          </button>
         </div>
       </div>
 
       {/* High Contrast Toggle */}
-      <div>
-        <h3 className="text-lg font-semibold text-[rgb(var(--fg))] mb-4">Accessibility</h3>
-        <ThemeAwareCard variant="subtle">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-medium text-[rgb(var(--fg))]">High Contrast</h4>
-              <p className="text-sm text-[rgb(var(--fg-muted))]">
-                Enhanced contrast for better accessibility
-              </p>
-            </div>
-            <button
-              onClick={() => handleHighContrastToggle(!appearance.highContrast)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                appearance.highContrast 
-                  ? 'bg-[rgb(var(--primary))]' 
-                  : 'bg-[rgb(var(--border))]'
-              }`}
-              disabled={isChanging}
-              role="switch"
-              aria-checked={appearance.highContrast}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  appearance.highContrast ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-[rgb(var(--fg))]">High Contrast</h3>
+            <p className="text-sm text-[rgb(var(--fg-muted))]">Enhanced accessibility mode</p>
           </div>
-        </ThemeAwareCard>
+          <button
+            onClick={() => handleHighContrastToggle(!appearance.highContrast)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              appearance.highContrast
+                ? 'bg-[rgb(var(--primary))]'
+                : 'bg-[rgb(var(--border))]'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                appearance.highContrast ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Loading State */}
       {isChanging && (
-        <div className="flex items-center justify-center py-4">
-          <div className="w-6 h-6 border-2 border-[rgb(var(--primary))] border-t-transparent rounded-full animate-spin"></div>
-          <span className="ml-2 text-sm text-[rgb(var(--fg-muted))]">Changing theme...</span>
+        <div className="flex items-center gap-2 text-[rgb(var(--fg-muted))]">
+          <div className="w-4 h-4 border-2 border-[rgb(var(--primary))] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm">Applying theme...</span>
         </div>
       )}
     </div>

@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { themeRegistry, type ThemeDefinition } from '../utils/themeRegistry'
 
 /**
  * Type for the available theme modes.
  */
-export type ThemeMode = 'light' | 'dark' | 'system' | 'high-contrast'
+export type ThemeMode = 'light' | 'dark' | 'system' | 'high-contrast' | string
 
 /**
  * Type for the available font families.
@@ -151,7 +152,8 @@ const applyThemeToDocument = async (
 
     // Remove existing theme attributes to prevent conflicts
     html.removeAttribute('data-theme')
-    html.style.removeProperty('--primary-rgb')
+    html.style.removeProperty('--primary')
+    html.style.removeProperty('--primary-light')
     html.style.removeProperty('--font-family-base')
 
     // Determine actual theme to apply
@@ -169,10 +171,15 @@ const applyThemeToDocument = async (
       // Validate and apply accent color
       const rgbValue = hexToRgb(accentColor)
       if (rgbValue) {
-        html.style.setProperty('--primary-rgb', rgbValue)
+        html.style.setProperty('--primary', rgbValue)
+        
+        // Create and set lighter variant
+        const lighterRgb = createLighterVariant(rgbValue)
+        html.style.setProperty('--primary-light', lighterRgb)
       } else {
         // Fallback to default if invalid color
-        html.style.setProperty('--primary-rgb', '99 179 237')
+        html.style.setProperty('--primary', '99 179 237')
+        html.style.setProperty('--primary-light', '129 140 248')
         console.warn('Invalid accent color provided, using fallback')
       }
     }
@@ -223,12 +230,18 @@ export const usePreferencesStore = create<PreferencesState>()(
         set({ themeStatus: 'loading' })
         
         try {
-          await applyThemeToDocument(
-            theme, 
-            state.appearance.accentColor, 
-            state.appearance.highContrast,
-            state.appearance.fontFamily
-          )
+          // Use theme registry for named themes, fallback to basic themes
+          if (theme === 'light' || theme === 'dark' || theme === 'system' || theme === 'high-contrast') {
+            await applyThemeToDocument(
+              theme, 
+              state.appearance.accentColor, 
+              state.appearance.highContrast,
+              state.appearance.fontFamily
+            )
+          } else {
+            // Load named theme from registry
+            await themeRegistry.loadTheme(theme)
+          }
           
           set((state) => ({ 
             appearance: { ...state.appearance, theme },
@@ -502,6 +515,20 @@ function hexToRgb(hex?: string | null): string | null {
   })
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized)
   return result ? `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` : null
+}
+
+/**
+ * Create a lighter variant of an RGB color
+ */
+function createLighterVariant(rgbString: string): string {
+  const [r, g, b] = rgbString.split(' ').map(Number)
+  
+  // Make the color lighter by increasing each component
+  const lighterR = Math.min(255, Math.round(r + (255 - r) * 0.3))
+  const lighterG = Math.min(255, Math.round(g + (255 - g) * 0.3))
+  const lighterB = Math.min(255, Math.round(b + (255 - b) * 0.3))
+  
+  return `${lighterR} ${lighterG} ${lighterB}`
 }
 
 // Export the enhanced theme application function for external use

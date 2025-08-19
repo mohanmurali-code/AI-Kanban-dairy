@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import { usePreferencesStore, applyThemeToDocument } from './store/theme'
+import { usePreferencesStore } from './store/theme'
 
 /**
  * Application entry point.
@@ -18,7 +18,7 @@ const Kanban = React.lazy(() => import('./pages/Kanban'))
 const Notes = React.lazy(() => import('./pages/Notes'))
 const Tasks = React.lazy(() => import('./pages/Tasks'))
 const Calendar = React.lazy(() => import('./pages/Calendar'))
-const ThemeLayout = React.lazy(() => import('./pages/ThemeLayout'))
+const Themes = React.lazy(() => import('./pages/Themes'))
 const Settings = React.lazy(() => import('./pages/Settings'))
 
 /** Router definition and route hierarchy. */
@@ -33,7 +33,8 @@ const router = createBrowserRouter([
       { path: 'notes', element: <React.Suspense fallback={<div>Loading…</div>}><Notes /></React.Suspense> },
       { path: 'tasks', element: <React.Suspense fallback={<div>Loading…</div>}><Tasks /></React.Suspense> },
       { path: 'calendar', element: <React.Suspense fallback={<div>Loading…</div>}><Calendar /></React.Suspense> },
-      { path: 'theme-layout', element: <React.Suspense fallback={<div>Loading…</div>}><ThemeLayout /></React.Suspense> },
+      { path: 'themes', element: <React.Suspense fallback={<div>Loading…</div>}><Themes /></React.Suspense> },
+      { path: 'theme-layout', element: <Navigate to="/themes" replace /> },
       { path: 'settings', element: <React.Suspense fallback={<div>Loading…</div>}><Settings /></React.Suspense> },
     ],
   },
@@ -41,14 +42,9 @@ const router = createBrowserRouter([
 
 function Main() {
   const { appearance, behavior } = usePreferencesStore()
-  const theme = appearance.theme
-  const accentColor = appearance.accentColor
-  const highContrast = appearance.highContrast
   const animations = behavior.animations
 
   useEffect(() => {
-    applyThemeToDocument(theme, accentColor, highContrast, appearance.fontFamily)
-
     // Handle prefers-reduced-motion
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const handleReducedMotion = () => {
@@ -65,7 +61,7 @@ function Main() {
     handleReducedMotion() // Apply initially
 
     return () => mediaQuery.removeEventListener('change', handleReducedMotion)
-  }, [theme, accentColor, highContrast, animations])
+  }, [animations])
 
   return <RouterProvider router={router} />
 }

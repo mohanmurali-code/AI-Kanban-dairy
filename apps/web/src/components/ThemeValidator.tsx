@@ -33,28 +33,30 @@ export function ThemeValidator() {
   }, [themeStyles])
 
   const validateCurrentTheme = () => {
-    // Get current theme colors from CSS variables
+    // Get current theme colors from CSS custom properties
     const root = document.documentElement
     const computedStyle = getComputedStyle(root)
     
     const colors = {
-      bg: `#${getComputedValue('--bg')}`,
-      surface: `#${getComputedValue('--surface')}`,
-      'surface-2': `#${getComputedValue('--surface-2')}`,
-      fg: `#${getComputedValue('--fg')}`,
-      'fg-muted': `#${getComputedValue('--fg-muted')}`,
-      'fg-subtle': `#${getComputedValue('--fg-subtle')}`,
-      primary: `#${getComputedValue('--primary')}`,
-      border: `#${getComputedValue('--border')}`,
-      'border-subtle': `#${getComputedValue('--border-subtle')}`,
-      success: `#${getComputedValue('--success')}`,
-      warning: `#${getComputedValue('--warning')}`,
-      error: `#${getComputedValue('--error')}`,
-      info: `#${getComputedValue('--info')}`
+      bg: getComputedValue('--bg'),
+      surface: getComputedValue('--surface'),
+      'surface-2': getComputedValue('--surface-2'),
+      fg: getComputedValue('--fg'),
+      'fg-muted': getComputedValue('--fg-muted'),
+      'fg-subtle': getComputedValue('--fg-subtle'),
+      primary: getComputedValue('--primary'),
+      border: getComputedValue('--border'),
+      'border-subtle': getComputedValue('--border-subtle'),
+      success: getComputedValue('--success'),
+      warning: getComputedValue('--warning'),
+      error: getComputedValue('--error'),
+      info: getComputedValue('--info')
     }
 
     function getComputedValue(varName: string): string {
       const value = computedStyle.getPropertyValue(varName).trim()
+      if (!value) return '000000' // fallback
+      
       // Convert RGB values to hex
       if (value.includes('rgb')) {
         const rgb = value.match(/\d+/g)
@@ -63,6 +65,14 @@ export function ThemeValidator() {
           return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
         }
       }
+      
+      // Handle space-separated RGB values (new format)
+      const rgbValues = value.split(' ').map(v => parseInt(v.trim()))
+      if (rgbValues.length === 3 && rgbValues.every(v => !isNaN(v))) {
+        const [r, g, b] = rgbValues
+        return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+      }
+      
       return '000000' // fallback
     }
 
@@ -93,6 +103,12 @@ export function ThemeValidator() {
     const primaryVariants = generateColorVariants(colors.primary)
     if (primaryVariants) {
       suggestions.push('Consider using generated color variants for hover/focus states')
+    }
+
+    // Check theme attribute
+    const currentTheme = root.getAttribute('data-theme')
+    if (!currentTheme) {
+      suggestions.push('No theme attribute detected. Ensure theme is properly applied.')
     }
 
     setValidationResult({

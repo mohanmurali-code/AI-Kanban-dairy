@@ -1,0 +1,10 @@
+[33m55b2a6e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/layout_management[m[33m, [m[1;31morigin/feat/layout_management[m[33m)[m mutiple changes in theme ,data mangement ,
+[33md8bc215[m **Document generated on:** August 14, 2025
+[33m8ac363c[m **Document generated on:** August 14, 2025
+[33m5d8df05[m mohanmurali-code: implement a new requirements to change layout of any page ui . a tab to mange layouts.
+[33m03662fd[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #8 from mohanmurali-code/feat/kanban-dnd-inline-edit
+[33m7fedd58[m I'll scan the theme and entry files to locate where `hexToRgb` is called with an undefined value and identify a safe fix. Ran tool Ran tool Ran tool Ran tool Ran tool
+[33m0f25aff[m Merge pull request #7 from mohanmurali-code/feat/kanban-dnd-inline-edit
+[33m0aa2c2f[m I’ll check your Git status to see if a merge or rebase is in progress and which files are conflicted, then I’ll give you precise fix steps per file. ```bash git status -sb ``` ```bash git diff --name-only --diff-filter=U ```
+[33m652fb3c[m I’ll check your Git status to see if a merge or rebase is in progress and which files are conflicted, then I’ll give you precise fix steps per file. ```bash git status -sb ``` ```bash git diff --name-only --diff-filter=U ```
+[33mbda5cf2[m Merge pull request #6 from mohanmurali-code/feat/ui-theme-store

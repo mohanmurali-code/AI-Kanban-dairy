@@ -6,9 +6,8 @@
  * ensures themes are properly applied and provides fallback mechanisms.
  */
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { usePreferencesStore, type ThemeStatus, type ThemeError } from '../store/theme'
-import { applyThemeToDocument } from '../store/theme'
 
 interface ThemeContextType {
   isInitialized: boolean
@@ -22,6 +21,70 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 interface ThemeProviderProps {
   children: ReactNode
+}
+
+/**
+ * Apply theme to document using CSS custom properties
+ */
+function applyThemeToDocument(
+  theme: string,
+  accentColor: string,
+  highContrast: boolean,
+  fontFamily: string
+): void {
+  const root = document.documentElement
+  
+  // Set the theme attribute
+  root.setAttribute('data-theme', theme)
+  
+  // Apply accent color if provided
+  if (accentColor) {
+    // Convert hex to RGB format for CSS variables
+    const rgbValue = hexToRgb(accentColor)
+    root.style.setProperty('--primary', rgbValue)
+    
+    // Create a lighter variant for --primary-light
+    const lighterRgb = createLighterVariant(rgbValue)
+    root.style.setProperty('--primary-light', lighterRgb)
+  }
+  
+  // Apply high contrast if enabled
+  if (highContrast) {
+    root.setAttribute('data-theme', 'high-contrast')
+  }
+  
+  // Apply font family
+  if (fontFamily && fontFamily !== 'system-ui') {
+    root.style.setProperty('--font-family-base', fontFamily)
+  }
+}
+
+/**
+ * Convert hex color to RGB values
+ */
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (result) {
+    const r = parseInt(result[1], 16)
+    const g = parseInt(result[2], 16)
+    const b = parseInt(result[3], 16)
+    return `${r} ${g} ${b}`
+  }
+  return '99 102 241' // Default primary color
+}
+
+/**
+ * Create a lighter variant of an RGB color
+ */
+function createLighterVariant(rgbString: string): string {
+  const [r, g, b] = rgbString.split(' ').map(Number)
+  
+  // Make the color lighter by increasing each component
+  const lighterR = Math.min(255, Math.round(r + (255 - r) * 0.3))
+  const lighterG = Math.min(255, Math.round(g + (255 - g) * 0.3))
+  const lighterB = Math.min(255, Math.round(b + (255 - b) * 0.3))
+  
+  return `${lighterR} ${lighterG} ${lighterB}`
 }
 
 /**
@@ -43,7 +106,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const initializeTheme = async () => {
       try {
         // Apply the current theme from store
-        await applyThemeToDocument(
+        applyThemeToDocument(
           appearance.theme,
           appearance.accentColor,
           appearance.highContrast,
@@ -85,9 +148,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         appearance.accentColor,
         appearance.highContrast,
         appearance.fontFamily
-      ).catch(error => {
-        console.error('Failed to apply theme change:', error)
-      })
+      )
     }
   }, [appearance.theme, appearance.accentColor, appearance.highContrast, appearance.fontFamily, isInitialized])
 
@@ -103,16 +164,24 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     clearThemeError()
   }
 
-  const contextValue: ThemeContextType = {
-    isInitialized,
-    themeStatus,
-    lastError,
-    retryTheme,
-    clearError
+  // Show loading state while initializing
+  if (!isInitialized) {
+    return <ThemeLoading />
+  }
+
+  // Show error state if theme failed to load
+  if (themeStatus === 'error' && lastError) {
+    return <ThemeErrorDisplay error={lastError} onRetry={retryTheme} onDismiss={clearError} />
   }
 
   return (
-    <ThemeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={{
+      isInitialized,
+      themeStatus,
+      lastError,
+      retryTheme,
+      clearError
+    }}>
       {children}
     </ThemeContext.Provider>
   )
@@ -130,57 +199,59 @@ export function useTheme() {
 }
 
 /**
- * Theme Error Boundary Component
+ * Theme Error Display Component
  * 
- * Displays theme errors and provides recovery options
+ * Shows error state when theme fails to load
  */
-export function ThemeErrorBoundary({ children }: { children: ReactNode }) {
-  const { themeStatus, lastError, retryTheme, clearError } = useTheme()
-
-  if (themeStatus === 'error' && lastError) {
-    return (
-      <div className="min-h-screen bg-[rgb(var(--bg))] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-[rgb(var(--surface))] border border-[rgb(var(--border))] rounded-lg p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-[rgb(var(--error))] rounded-full flex items-center justify-center">
-              <span className="text-white text-sm">!</span>
-            </div>
-            <h2 className="text-lg font-semibold text-[rgb(var(--fg))]">
-              Theme Error
-            </h2>
+function ThemeErrorDisplay({ 
+  error, 
+  onRetry, 
+  onDismiss 
+}: { 
+  error: ThemeError
+  onRetry: () => void
+  onDismiss: () => void
+}) {
+  return (
+    <div className="min-h-screen bg-[rgb(var(--bg))] flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-[rgb(var(--surface))] border border-[rgb(var(--error))] rounded-lg p-6 shadow-lg">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-[rgb(var(--error))] rounded-full flex items-center justify-center">
+            <span className="text-white text-sm">!</span>
           </div>
-          
-          <div className="mb-4">
-            <p className="text-sm text-[rgb(var(--fg-muted))] mb-2">
-              {lastError.message}
+          <h2 className="text-lg font-semibold text-[rgb(var(--fg))]">
+            Theme Error
+          </h2>
+        </div>
+        
+        <div className="mb-4">
+          <p className="text-sm text-[rgb(var(--fg-muted))] mb-2">
+            {error.message}
+          </p>
+          {error.details && (
+            <p className="text-xs text-[rgb(var(--fg-subtle))]">
+              {error.details}
             </p>
-            {lastError.details && (
-              <p className="text-xs text-[rgb(var(--fg-subtle))]">
-                {lastError.details}
-              </p>
-            )}
-          </div>
-          
-          <div className="flex gap-2">
-            <button
-              onClick={retryTheme}
-              className="flex-1 px-3 py-2 bg-[rgb(var(--primary))] text-white rounded hover:opacity-90 transition-opacity text-sm"
-            >
-              Retry
-            </button>
-            <button
-              onClick={clearError}
-              className="flex-1 px-3 py-2 border border-[rgb(var(--border))] rounded hover:bg-[rgb(var(--surface-2))] transition-colors text-sm"
-            >
-              Dismiss
-            </button>
-          </div>
+          )}
+        </div>
+        
+        <div className="flex gap-2">
+          <button
+            onClick={onRetry}
+            className="flex-1 px-3 py-2 bg-[rgb(var(--primary))] text-white rounded hover:opacity-90 transition-opacity text-sm"
+          >
+            Retry
+          </button>
+          <button
+            onClick={onDismiss}
+            className="flex-1 px-3 py-2 border border-[rgb(var(--border))] rounded hover:bg-[rgb(var(--surface-2))] transition-colors text-sm"
+          >
+            Dismiss
+          </button>
         </div>
       </div>
-    )
-  }
-
-  return <>{children}</>
+    </div>
+  )
 }
 
 /**
@@ -188,7 +259,7 @@ export function ThemeErrorBoundary({ children }: { children: ReactNode }) {
  * 
  * Shows loading state while theme is being initialized
  */
-export function ThemeLoading() {
+function ThemeLoading() {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))] flex items-center justify-center">
       <div className="text-center">
@@ -207,7 +278,8 @@ export function ThemeLoading() {
 export function ThemeStatusIndicator() {
   const { themeStatus, lastError } = useTheme()
   
-  if (process.env.NODE_ENV !== 'development') {
+  // Only show in development mode
+  if (window.location.hostname !== 'localhost') {
     return null
   }
 

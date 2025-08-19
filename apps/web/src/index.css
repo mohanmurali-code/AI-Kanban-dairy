@@ -3,17 +3,51 @@
 @layer base {
   :root {
     color-scheme: light dark;
-    /* Default (Dark) theme inspiration tokens (RGB triplets for Tailwind arbitrary colors) */
+    
+    /* Core Colors - Merged from both files */
     --bg: 14 34 48;            /* app background */
     --surface: 20 44 60;       /* panels */
     --surface-2: 26 54 73;     /* cards / inputs */
     --border: 38 66 84;        /* soft border */
+    --border-subtle: 51 65 85; /* subtle border */
     --fg: 225 232 238;         /* foreground text */
     --fg-muted: 159 174 186;   /* secondary text */
-    --primary: 99 179 237;     /* accent (cyan-ish) */
+    --fg-subtle: 148 163 184;  /* subtle text */
+    --primary: 99 179 237;     /* accent (cyan-ish) - will be overridden by JS */
+    --primary-light: 129 140 248; /* light primary - will be overridden by JS */
+    
+    /* Semantic Colors */
+    --success: 34 197 94;
+    --warning: 251 146 60;
+    --error: 239 68 68;
+    --info: 6 182 212;
+    
+    /* Shadows */
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    
+    /* Typography */
+    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    --font-size-base: 1rem;
+    --line-height-base: 1.6;
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* Border Radius */
     --radius-sm: 10px;
     --radius-md: 14px;
     --radius-lg: 18px;
+    --radius-xl: 1rem;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
   }
 
   :root[data-theme='light'] {
@@ -22,9 +56,24 @@
     --surface: 255 255 255;    /* light panels */
     --surface-2: 249 250 251;  /* light cards / inputs */
     --border: 229 231 235;     /* light soft border */
+    --border-subtle: 243 244 246; /* light subtle border */
     --fg: 17 24 39;            /* light foreground text */
     --fg-muted: 107 114 128;   /* light secondary text */
-    --primary: 67 56 202;      /* light accent (indigo) */
+    --fg-subtle: 115 115 115;  /* light subtle text */
+    /* Note: --primary and --primary-light are set dynamically by JavaScript */
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --bg: 15 23 42;
+    --surface: 30 41 59;
+    --surface-2: 51 65 85;
+    --fg: 248 250 252;
+    --fg-muted: 203 213 225;
+    --fg-subtle: 148 163 184;
+    --border: 71 85 105;
+    --border-subtle: 51 65 85;
+    /* Note: --primary and --primary-light are set dynamically by JavaScript */
   }
 
   :root[data-theme='high-contrast'] {
@@ -33,15 +82,22 @@
     --surface: 0 0 0;          /* pure black panels */
     --surface-2: 0 0 0;        /* pure black cards / inputs */
     --border: 255 255 255;     /* pure white border */
+    --border-subtle: 255 255 255; /* pure white subtle border */
     --fg: 255 255 255;         /* pure white foreground */
     --fg-muted: 192 192 192;   /* light gray muted text */
-    --primary: 255 255 0;      /* pure yellow accent */
+    --fg-subtle: 255 255 255;  /* pure white subtle text */
+    --primary: 255 255 0;      /* pure yellow accent - fixed for accessibility */
+    --primary-light: 255 255 0; /* pure yellow primary light - fixed for accessibility */
+    --success: 0 255 0;
+    --warning: 255 255 0;
+    --error: 255 0 0;
+    --info: 0 255 255;
   }
 
   html, body {
     background-color: rgb(var(--bg));
     color: rgb(var(--fg));
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: var(--font-family-base);
   }
 }
 
@@ -49,9 +105,27 @@
   .container-app {
     @apply mx-auto max-w-screen-2xl px-4;
   }
+  
+  /* Theme Utility Classes */
+  .text-primary { color: rgb(var(--primary)); }
+  .text-muted { color: rgb(var(--fg-muted)); }
+  .text-subtle { color: rgb(var(--fg-subtle)); }
+  .bg-primary { background-color: rgb(var(--primary)); }
+  .bg-surface { background-color: rgb(var(--surface)); }
+  .bg-surface-2 { background-color: rgb(var(--surface-2)); }
+  .border-primary { border-color: rgb(var(--primary)); }
+  .border-surface { border-color: rgb(var(--surface)); }
+  
+  /* Status Indicators */
+  .status-success { color: rgb(var(--success)); }
+  .status-warning { color: rgb(var(--warning)); }
+  .status-error { color: rgb(var(--error)); }
+  .status-info { color: rgb(var(--info)); }
 }
 
 @layer components {
+  /* ===== CORE UI COMPONENTS ===== */
+  
   .ui-panel {
     border-color: rgb(var(--border));
     background-color: rgb(var(--surface));
@@ -95,7 +169,218 @@
     border-radius: 9999px;
   }
 
-  /* Modal Components */
+  /* ===== THEME SYSTEM COMPONENTS ===== */
+  
+  /* Theme Container */
+  .theme-container {
+    min-height: 100vh;
+    transition: all var(--transition-normal);
+  }
+
+  /* Theme Preview Styles */
+  .theme-preview {
+    width: 100%;
+    height: 120px;
+    border-radius: var(--radius-lg);
+    border: 2px solid transparent;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-preview:hover {
+    border-color: rgb(var(--primary));
+    transform: translateY(-2px);
+  }
+
+  .theme-preview.active {
+    border-color: rgb(var(--primary));
+    box-shadow: 0 4px 12px rgb(var(--primary) / 0.3);
+  }
+
+  /* Theme Category Headers */
+  .theme-category {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgb(var(--border));
+    color: rgb(var(--fg));
+  }
+
+  /* Theme Grid Layout */
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  /* Theme Card */
+  .theme-card {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all var(--transition-fast);
+  }
+
+  .theme-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Theme Name */
+  .theme-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: rgb(var(--fg));
+  }
+
+  /* Theme Description */
+  .theme-description {
+    color: rgb(var(--fg-muted));
+    margin-bottom: 1rem;
+    line-height: var(--line-height-base);
+  }
+
+  /* ===== ENHANCED COMPONENT STYLES ===== */
+  
+  /* Cards and Components */
+  .card,
+  .kanban-column,
+  .task-card {
+    background: rgb(var(--surface));
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid rgb(var(--border));
+    transition: all var(--transition-fast);
+  }
+
+  .card:hover,
+  .kanban-column:hover,
+  .task-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+  }
+
+  /* Buttons */
+  .btn,
+  .button {
+    background: rgb(var(--primary));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .btn:hover,
+  .button:hover {
+    background: rgb(var(--primary-light));
+    transform: translateY(-1px);
+  }
+
+  /* Form Elements */
+  input,
+  textarea,
+  select {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+    color: rgb(var(--fg));
+    transition: border-color var(--transition-fast);
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: rgb(var(--primary));
+    box-shadow: 0 0 0 3px rgb(var(--primary) / 0.1);
+  }
+
+  /* Navigation */
+  .nav,
+  .navigation {
+    background: rgb(var(--surface));
+    border-bottom: 1px solid rgb(var(--border));
+  }
+
+  .nav-link {
+    color: rgb(var(--fg-muted));
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: rgb(var(--primary));
+    background: rgb(var(--primary) / 0.1);
+  }
+
+  /* ===== LAYOUT PREVIEW STYLES ===== */
+
+  /* Layout Preview Container */
+  .preview-layout {
+    min-height: 200px;
+    padding: var(--spacing-md);
+  }
+
+  /* Grid Layout */
+  .preview-layout.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+    align-items: start;
+  }
+
+  /* List Layout */
+  .preview-layout.list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .preview-layout.list > div {
+    width: 100%;
+  }
+
+  /* Split View Layout */
+  .preview-layout.split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  /* Sidebar Layout */
+  .preview-layout.sidebar {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  .preview-layout.sidebar::before {
+    content: "Sidebar";
+    background: rgb(var(--surface-2));
+    border: 1px solid rgb(var(--border));
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(var(--fg-muted));
+    font-size: 0.875rem;
+  }
+
+  /* ===== MODAL COMPONENTS ===== */
+  
   .theme-modal-backdrop {
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
@@ -135,7 +420,8 @@
     color: rgb(var(--fg));
   }
 
-  /* Form Components */
+  /* ===== FORM COMPONENTS ===== */
+  
   .theme-label {
     color: rgb(var(--fg));
     font-weight: 500;
@@ -171,7 +457,8 @@
     color: rgb(var(--fg-muted));
   }
 
-  /* Button Components */
+  /* ===== BUTTON COMPONENTS ===== */
+  
   .theme-btn-primary {
     @apply bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700;
     background-color: rgb(var(--primary));
@@ -214,28 +501,98 @@
     color: rgb(var(--fg));
   }
 
-  /* Focus Management */
+  /* ===== FOCUS MANAGEMENT ===== */
+  
   .theme-focus-ring {
     outline: 2px solid rgb(var(--primary));
     outline-offset: 2px;
   }
 
-  /* Accessibility */
+  .btn:focus,
+  .button:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* ===== RESPONSIVE DESIGN ===== */
+  
+  @media (max-width: 768px) {
+    .preview-layout.sidebar {
+      grid-template-columns: 1fr;
+    }
+    
+    .preview-layout.sidebar::before {
+      display: none;
+    }
+    
+    .preview-layout.split {
+      grid-template-columns: 1fr;
+    }
+    
+    .preview-layout.grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+
+  /* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .card,
+    .kanban-column,
+    .task-card {
+      border-width: 2px;
+    }
+    
+    .btn,
+    .button {
+      border-width: 2px;
+    }
+    
+    .theme-modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .theme-input-focus {
+      border-color: rgb(var(--primary));
+      box-shadow: 0 0 0 3px rgb(var(--primary));
+    }
+  }
+
+  /* Reduced Motion Support */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+    
+    .theme-preview:hover,
+    .theme-card:hover,
+    .card:hover,
+    .kanban-column:hover,
+    .task-card:hover,
+    .btn:hover,
+    .button:hover {
+      transform: none !important;
+    }
   }
 
-  /* High Contrast Mode Adjustments */
-  :root[data-theme='high-contrast'] .theme-modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-
-  :root[data-theme='high-contrast'] .theme-input-focus {
-    border-color: rgb(var(--primary));
-    box-shadow: 0 0 0 3px rgb(var(--primary));
+  /* ===== PRINT STYLES ===== */
+  
+  @media print {
+    .theme-preview,
+    .theme-actions,
+    .preview-layout {
+      display: none !important;
+    }
+    
+    .theme-card {
+      break-inside: avoid;
+      border: 1px solid #000 !important;
+    }
   }
 }
