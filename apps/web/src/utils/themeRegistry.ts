@@ -34,6 +34,19 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
     accentColor: '#3b82f6'
   },
   {
+    id: 'glossy-transparent',
+    name: 'Glossy Transparent',
+    description: 'Glassmorphism theme with glossy, semi-transparent surfaces',
+    category: 'special',
+    preview: {
+      bgMain: '#667eea',
+      textMain: '#ffffff',
+      accent: '#64b5f6'
+    },
+    cssFile: 'glossy-transparent.css',
+    accentColor: '#64b5f6'
+  },
+  {
     id: 'light-modern',
     name: 'Light Modern',
     description: 'Contemporary light theme with modern aesthetics',
@@ -195,14 +208,23 @@ class ThemeRegistry {
 
     const root = document.documentElement
     
-    // Remove existing theme classes
-    root.classList.remove(...Array.from(this.loadedThemes))
-    
-    // Add the new theme class
-    root.classList.add(themeId)
-    
-    // Set the theme attribute
-    root.setAttribute('data-theme', themeId)
+    // Remove existing theme classes (use prefixed class names)
+    try {
+      const allThemeClasses = AVAILABLE_THEMES.map(t => `theme-${t.id}`)
+      root.classList.remove(...allThemeClasses)
+    } catch {}
+
+    // Add the new theme class with prefix expected by CSS files
+    root.classList.add(`theme-${themeId}`)
+
+    // Set the base data-theme for CSS variable tokens
+    // Map theme categories to base modes used in index.css
+    const baseMode = (
+      theme.category === 'light' ? 'light' :
+      theme.category === 'accessibility' ? 'high-contrast' :
+      'dark'
+    )
+    root.setAttribute('data-theme', baseMode)
     
     // Apply accent color
     if (theme.accentColor) {

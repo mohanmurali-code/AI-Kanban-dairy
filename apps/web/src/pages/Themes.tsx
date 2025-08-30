@@ -1,9 +1,8 @@
 import type { ThemeMode, FontFamily, LineSpacing, BoardDensity, CardSize } from '../store/theme'
 import { usePreferencesStore } from '../store/theme'
 import React, { useState, useEffect } from 'react'
-import { ThemeSelector } from '../components/ThemeSelector'
-import { ThemeGrid } from '../components/ThemeGrid'
 import { ThemeValidator } from '../components/ThemeValidator'
+import { themeRegistry, type ThemeDefinition } from '../utils/themeRegistry'
 
 /**
  * Consolidated Themes & Layout page.
@@ -33,6 +32,13 @@ function Themes() {
   const [selectedLayout, setSelectedLayout] = useState<'grid' | 'list' | 'split' | 'sidebar'>('grid')
   const [customCSS, setCustomCSS] = useState('')
 
+  // New: simple theme picker's local state
+  const [selectedThemeId, setSelectedThemeId] = useState<string>(() => {
+    const available = themeRegistry.getAvailableThemes().map(t => t.id)
+    const current = String(appearance.theme || '')
+    return available.includes(current) ? current : (available[0] || 'light-classic')
+  })
+
   // Apply custom CSS to document
   useEffect(() => {
     if (customCSS.trim()) {
@@ -61,6 +67,8 @@ function Themes() {
     { id: 'layout', label: 'Layout', icon: '📐' },
     { id: 'validation', label: 'Validation', icon: '✅' }
   ]
+
+  const selectedTheme = themeRegistry.getTheme(selectedThemeId)
 
   return (
     <div className="space-y-6">
@@ -94,109 +102,174 @@ function Themes() {
         {/* Themes Tab */}
         {activeTab === 'themes' && (
           <div className="space-y-6">
-            {/* Theme Grid */}
-            <ThemeGrid />
-            
-            <div className="border-t border-[rgb(var(--border))] pt-6">
-              <h2 className="text-xl font-semibold text-[rgb(var(--fg))] mb-4">Basic Theme Options</h2>
-              <ThemeSelector />
-            </div>
-
-            {/* Font Settings */}
+            {/* Simple Theme Picker */}
             <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-[rgb(var(--fg))]">Font Settings</h2>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">
-                      Font Family
-                    </label>
-                    <select
-                      className="w-full px-3 py-2 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] text-[rgb(var(--fg))] focus:border-[rgb(var(--primary))] focus:outline-none"
-                      value={appearance.fontFamily}
-                      onChange={(e) => setFontFamily(e.target.value as FontFamily)}
-                    >
-                      <option value="system-ui">System UI</option>
-                      <option value="serif">Serif</option>
-                      <option value="monospace">Monospace</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">
-                      Font Size
-                    </label>
-                    <div className="flex gap-2">
-                      {(['S', 'M', 'L', 'XL'] as const).map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setFontSize(size)}
-                          className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                            appearance.fontSize === size
-                              ? 'bg-[rgb(var(--primary))] text-white'
-                              : 'bg-[rgb(var(--surface-2))] text-[rgb(var(--fg-muted))] hover:bg-[rgb(var(--border))]'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">
-                      Line Spacing
-                    </label>
-                    <div className="flex gap-2">
-                      {(['tight', 'normal', 'relaxed'] as const).map((spacing) => (
-                        <button
-                          key={spacing}
-                          onClick={() => setLineSpacing(spacing as LineSpacing)}
-                          className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                            appearance.lineSpacing === spacing
-                              ? 'bg-[rgb(var(--primary))] text-white'
-                              : 'bg-[rgb(var(--surface-2))] text-[rgb(var(--fg-muted))] hover:bg-[rgb(var(--border))]'
-                          }`}
-                        >
-                          {spacing.charAt(0).toUpperCase() + spacing.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              <h2 className="text-xl font-semibold text-[rgb(var(--fg))]">Pick a Theme</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">Theme</label>
+                  <select
+                    className="w-full px-3 py-2 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] text-[rgb(var(--fg))] focus:border-[rgb(var(--primary))] focus:outline-none"
+                    value={selectedThemeId}
+                    onChange={(e) => setSelectedThemeId(e.target.value)}
+                  >
+                    {themeRegistry.getAvailableThemes().map((t) => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                  {selectedTheme && (
+                    <p className="mt-2 text-sm text-[rgb(var(--fg-muted))]">{selectedTheme.description}</p>
+                  )}
+                </div>
+                <div className="flex gap-2 md:justify-end">
+                  <button
+                    onClick={async () => {
+                      // Preview loads the CSS and applies it temporarily
+                      try {
+                        await themeRegistry.loadTheme(selectedThemeId)
+                      } catch (e) {
+                        console.error('Preview failed', e)
+                      }
+                    }}
+                    className="px-4 py-2 border border-[rgb(var(--border))] rounded-md text-[rgb(var(--fg))] hover:bg-[rgb(var(--surface-2))] transition-colors"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await setTheme(selectedThemeId)
+                    }}
+                    className="px-4 py-2 bg-[rgb(var(--primary))] text-white rounded-md hover:opacity-90 transition-colors"
+                  >
+                    Apply
+                  </button>
                 </div>
               </div>
 
-            {/* Custom CSS Editor */}
+              {/* Compact live preview */}
+              {selectedTheme && (
+                <div className="mt-4 border border-[rgb(var(--border))] rounded-md overflow-hidden">
+                  <div className="p-4 bg-[rgb(var(--surface-2))] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: selectedTheme.preview.accent }} />
+                      <div>
+                        <div className="font-medium text-[rgb(var(--fg))]">{selectedTheme.name}</div>
+                        <div className="text-xs text-[rgb(var(--fg-muted))]">Accent {selectedTheme.preview.accent}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))]">
+                      <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded-sm border" style={{ backgroundColor: selectedTheme.preview.bgMain }} /> BG</span>
+                      <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded-sm border" style={{ backgroundColor: selectedTheme.preview.textMain }} /> Text</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Accent Color */}
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-[rgb(var(--fg))]">Accent Color</h3>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  placeholder="#7c3aed"
+                  value={customAccentColorInput}
+                  onChange={(e) => setCustomAccentColorInput(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] text-[rgb(var(--fg))] focus:border-[rgb(var(--primary))] focus:outline-none"
+                />
+                <button
+                  onClick={applyCustomAccentColor}
+                  className="px-3 py-2 border border-[rgb(var(--border))] rounded-md text-[rgb(var(--fg))] hover:bg-[rgb(var(--surface-2))]"
+                >
+                  Apply Accent
+                </button>
+                {selectedTheme && (
+                  <button
+                    onClick={() => setAccentColor(selectedTheme.accentColor)}
+                    className="px-3 py-2 border border-[rgb(var(--border))] rounded-md text-[rgb(var(--fg))] hover:bg-[rgb(var(--surface-2))]"
+                  >
+                    Use Theme Default
+                  </button>
+                )}
+              </div>
+
+              {/* Preset Palette */}
+              <div className="mt-2">
+                <div className="text-sm text-[rgb(var(--fg-muted))] mb-2">Presets</div>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    '#3b82f6', // blue
+                    '#6366f1', // indigo
+                    '#10b981', // emerald
+                    '#f59e0b', // amber
+                    '#ef4444', // red
+                    '#a855f7', // purple
+                    '#06b6d4', // cyan
+                    '#22c55e', // green
+                    '#eab308', // yellow
+                  ].map((hex) => (
+                    <button
+                      key={hex}
+                      title={hex}
+                      onClick={() => setAccentColor(hex)}
+                      className={`w-7 h-7 rounded-full border ${appearance.accentColor.toLowerCase() === hex.toLowerCase() ? 'ring-2 ring-offset-2 ring-[rgb(var(--primary))]' : ''}`}
+                      style={{ backgroundColor: hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Font Settings (kept minimal) */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-[rgb(var(--fg))]">Custom CSS Editor</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <h3 className="text-lg font-semibold text-[rgb(var(--fg))]">Font Settings</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-2">
-                    CSS Code
-                  </label>
-                  <textarea
-                    className="w-full h-32 px-3 py-2 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] text-[rgb(var(--fg))] font-mono text-sm focus:border-[rgb(var(--primary))] focus:outline-none"
-                    placeholder="/* Add your custom CSS here */&#10;.custom-class {&#10;  color: red;&#10;}"
-                    value={customCSS}
-                    onChange={(e) => setCustomCSS(e.target.value)}
-                  />
+                  <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">Font Family</label>
+                  <select
+                    className="w-full px-3 py-2 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] text-[rgb(var(--fg))] focus:border-[rgb(var(--primary))] focus:outline-none"
+                    value={appearance.fontFamily}
+                    onChange={(e) => setFontFamily(e.target.value as FontFamily)}
+                  >
+                    <option value="system-ui">System UI</option>
+                    <option value="serif">Serif</option>
+                    <option value="monospace">Monospace</option>
+                  </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-2">
-                    Live Preview
-                  </label>
-                  <div className="h-32 border border-[rgb(var(--border))] rounded-md bg-[rgb(var(--surface))] p-3">
-                    <div className="text-sm text-[rgb(var(--fg-muted))]">
-                      {customCSS.trim() ? (
-                        <div className="space-y-2">
-                          <div className="font-medium text-[rgb(var(--fg))]">Custom CSS Applied</div>
-                          <div className="text-xs font-mono bg-[rgb(var(--surface-2))] p-2 rounded">
-                            {customCSS}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center text-[rgb(var(--fg-subtle))] pt-8">
-                          Add CSS to see live preview
-                        </div>
-                      )}
-                    </div>
+                  <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">Font Size</label>
+                  <div className="flex gap-2">
+                    {(['S', 'M', 'L', 'XL'] as const).map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setFontSize(size)}
+                        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                          appearance.fontSize === size
+                            ? 'bg-[rgb(var(--primary))] text-white'
+                            : 'bg-[rgb(var(--surface-2))] text-[rgb(var(--fg-muted))] hover:bg-[rgb(var(--border))]'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[rgb(var(--fg-muted))] mb-1">Line Spacing</label>
+                  <div className="flex gap-2">
+                    {(['tight', 'normal', 'relaxed'] as const).map((spacing) => (
+                      <button
+                        key={spacing}
+                        onClick={() => setLineSpacing(spacing as LineSpacing)}
+                        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                          appearance.lineSpacing === spacing
+                            ? 'bg-[rgb(var(--primary))] text-white'
+                            : 'bg-[rgb(var(--surface-2))] text-[rgb(var(--fg-muted))] hover:bg-[rgb(var(--border))]'
+                        }`}
+                      >
+                        {spacing.charAt(0).toUpperCase() + spacing.slice(1)}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>

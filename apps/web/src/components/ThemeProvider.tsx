@@ -6,7 +6,7 @@
  * ensures themes are properly applied and provides fallback mechanisms.
  */
 
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { usePreferencesStore, type ThemeStatus, type ThemeError } from '../store/theme'
 
 interface ThemeContextType {
@@ -34,8 +34,18 @@ function applyThemeToDocument(
 ): void {
   const root = document.documentElement
   
-  // Set the theme attribute
-  root.setAttribute('data-theme', theme)
+  // Set the theme attribute only for core modes
+  const isCoreMode = theme === 'light' || theme === 'dark' || theme === 'system' || theme === 'high-contrast'
+  if (isCoreMode) {
+    if (highContrast) {
+      root.setAttribute('data-theme', 'high-contrast')
+    } else if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      root.setAttribute('data-theme', prefersDark ? 'dark' : 'light')
+    } else {
+      root.setAttribute('data-theme', theme)
+    }
+  }
   
   // Apply accent color if provided
   if (accentColor) {
@@ -46,10 +56,16 @@ function applyThemeToDocument(
     // Create a lighter variant for --primary-light
     const lighterRgb = createLighterVariant(rgbValue)
     root.style.setProperty('--primary-light', lighterRgb)
+
+    // Also set alias variables used by theme CSS files
+    root.style.setProperty('--accent-primary', `rgb(${rgbValue})`)
+    root.style.setProperty('--accent-secondary', `rgb(${lighterRgb})`)
   }
   
   // Apply high contrast if enabled
-  if (highContrast) {
+  if (highContrast && !isCoreMode) {
+    // For named themes with high contrast, ensure base is set appropriately without
+    // overriding named theme class application from the registry
     root.setAttribute('data-theme', 'high-contrast')
   }
   

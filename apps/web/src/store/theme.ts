@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { themeRegistry, type ThemeDefinition } from '../utils/themeRegistry'
+import { themeRegistry } from '../utils/themeRegistry'
 
 /**
  * Type for the available theme modes.
@@ -145,7 +145,7 @@ const applyThemeToDocument = async (
   highContrast: boolean,
   fontFamily: FontFamily
 ): Promise<void> => {
-  const startTime = performance.now()
+  /* const startTime = performance.now() */
   
   try {
     const html = document.documentElement
@@ -204,16 +204,16 @@ const applyThemeToDocument = async (
       throw new Error('Theme attribute was not set correctly')
     }
 
-    const loadTime = performance.now() - startTime
+    /* const loadTime = performance.now() - startTime */
     return Promise.resolve()
   } catch (error) {
-    const loadTime = performance.now() - startTime
+    /* const loadTime = performance.now() - startTime */
     throw {
       code: 'THEME_APPLICATION_FAILED',
       message: 'Failed to apply theme to document',
       details: error instanceof Error ? error.message : 'Unknown error',
       timestamp: Date.now(),
-      loadTime
+      // loadTime
     }
   }
 }
@@ -241,6 +241,27 @@ export const usePreferencesStore = create<PreferencesState>()(
           } else {
             // Load named theme from registry
             await themeRegistry.loadTheme(theme)
+
+            // Re-apply user's accent variables after theme CSS loads
+            const html = document.documentElement
+            const rgbValue = hexToRgb(state.appearance.accentColor)
+            if (rgbValue) {
+              html.style.setProperty('--primary', rgbValue)
+              const lighterRgb = createLighterVariant(rgbValue)
+              html.style.setProperty('--primary-light', lighterRgb)
+              html.style.setProperty('--accent-primary', `rgb(${rgbValue})`)
+              html.style.setProperty('--accent-secondary', `rgb(${lighterRgb})`)
+            }
+            // Ensure data-theme base mode matches selected named theme category
+            const def = themeRegistry.getTheme(theme)
+            if (def) {
+              const baseMode = (
+                def.category === 'light' ? 'light' :
+                def.category === 'accessibility' ? 'high-contrast' :
+                'dark'
+              )
+              html.setAttribute('data-theme', baseMode)
+            }
           }
           
           set((state) => ({ 
@@ -375,8 +396,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         }
       },
       resetToDefaults: () => {
-        const state = get()
-        set((state) => ({
+        set(() => ({
           ...defaultPreferences,
           customAccentColorInput: '', // Also reset custom input
         }))
