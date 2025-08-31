@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { themeRegistry } from '../utils/themeRegistry'
 
 /**
  * Type for the available theme modes.
  */
-export type ThemeMode = 'light' | 'dark' | 'system' | 'high-contrast'
+export type ThemeMode = 'light' | 'dark' | 'system' | 'high-contrast' | string
 
 /**
  * Type for the available font families.
@@ -27,10 +28,25 @@ export type BoardDensity = 'compact' | 'cozy' | 'comfortable'
 export type CardSize = 'S' | 'M' | 'L'
 
 /**
+ * Theme application status
+ */
+export type ThemeStatus = 'idle' | 'loading' | 'success' | 'error'
+
+/**
+ * Interface for theme error information
+ */
+export interface ThemeError {
+  code: string
+  message: string
+  details?: string
+  timestamp: number
+}
+
+/**
  * Interface for user preference state.
  */
 interface PreferencesState {
-  version: 1
+  version: 2 // Increment version for new schema
   appearance: {
     theme: ThemeMode
     highContrast: boolean
@@ -61,8 +77,14 @@ interface PreferencesState {
   // Transient state for UI
   customAccentColorInput: string
   
+  // Theme application state
+  themeStatus: ThemeStatus
+  lastError?: ThemeError
+  lastAppliedTheme?: ThemeMode
+  themeLoadTime?: number
+  
   // Actions
-  setTheme: (theme: ThemeMode) => void
+  setTheme: (theme: ThemeMode) => Promise<void>
   setAccentColor: (color: string) => void
   setHighContrast: (enabled: boolean) => void
   setFontFamily: (font: FontFamily) => void
@@ -81,10 +103,12 @@ interface PreferencesState {
   resetToDefaults: () => void
   setCustomAccentColorInput: (color: string) => void
   applyCustomAccentColor: () => void
+  clearThemeError: () => void
+  retryThemeApplication: () => Promise<void>
 }
 
-const defaultPreferences: PreferencesState = {
-  version: 1,
+const defaultPreferences: Omit<PreferencesState, 'setTheme' | 'setAccentColor' | 'setHighContrast' | 'setFontFamily' | 'setFontSize' | 'setLineSpacing' | 'setSidebarPosition' | 'setBoardDensity' | 'setCardSize' | 'toggleDueReminders' | 'setDueReminderLead' | 'toggleCompletionNotifications' | 'toggleQuietHours' | 'setQuietHours' | 'setUndoWindowSec' | 'setAnimations' | 'resetToDefaults' | 'setCustomAccentColorInput' | 'applyCustomAccentColor' | 'clearThemeError' | 'retryThemeApplication'> = {
+  version: 2,
   appearance: {
     theme: 'system',
     highContrast: false,
@@ -109,27 +133,89 @@ const defaultPreferences: PreferencesState = {
     animations: 'system',
   },
   customAccentColorInput: '',
+  themeStatus: 'idle',
+}
 
-  // Actions will be defined below in the create function
-  setTheme: () => {},
-  setAccentColor: () => {},
-  setHighContrast: () => {},
-  setFontFamily: () => {},
-  setFontSize: () => {},
-  setLineSpacing: () => {},
-  setSidebarPosition: () => {},
-  setBoardDensity: () => {},
-  setCardSize: () => {},
-  toggleDueReminders: () => {},
-  setDueReminderLead: () => {},
-  toggleCompletionNotifications: () => {},
-  toggleQuietHours: () => {},
-  setQuietHours: () => {},
-  setUndoWindowSec: () => {},
-  setAnimations: () => {},
-  resetToDefaults: () => {},
-  setCustomAccentColorInput: () => {},
-  applyCustomAccentColor: () => {},
+/**
+ * Enhanced theme application function with error handling and performance tracking
+ */
+const applyThemeToDocument = async (
+  theme: ThemeMode, 
+  accentColor: string, 
+  highContrast: boolean,
+  fontFamily: FontFamily
+): Promise<void> => {
+  /* const startTime = performance.now() */
+  
+  try {
+    const html = document.documentElement
+
+    // Remove existing theme attributes to prevent conflicts
+    html.removeAttribute('data-theme')
+    html.style.removeProperty('--primary')
+    html.style.removeProperty('--primary-light')
+    html.style.removeProperty('--font-family-base')
+
+    // Determine actual theme to apply
+    let actualTheme = theme
+    if (theme === 'system') {
+      actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    // Apply theme with error handling
+    if (highContrast) {
+      html.setAttribute('data-theme', 'high-contrast')
+    } else {
+      html.setAttribute('data-theme', actualTheme)
+      
+      // Validate and apply accent color
+      const rgbValue = hexToRgb(accentColor)
+      if (rgbValue) {
+        html.style.setProperty('--primary', rgbValue)
+        
+        // Create and set lighter variant
+        const lighterRgb = createLighterVariant(rgbValue)
+        html.style.setProperty('--primary-light', lighterRgb)
+      } else {
+        // Fallback to default if invalid color
+        html.style.setProperty('--primary', '99 179 237')
+        html.style.setProperty('--primary-light', '129 140 248')
+        console.warn('Invalid accent color provided, using fallback')
+      }
+    }
+
+    // Set font family with validation
+    let fontStack = ''
+    switch (fontFamily) {
+      case 'serif':
+        fontStack = 'serif'
+        break
+      case 'monospace':
+        fontStack = 'monospace'
+        break
+      default:
+        fontStack = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
+    }
+    html.style.setProperty('--font-family-base', fontStack)
+
+    // Verify theme was applied correctly
+    const appliedTheme = html.getAttribute('data-theme')
+    if (!appliedTheme) {
+      throw new Error('Theme attribute was not set correctly')
+    }
+
+    /* const loadTime = performance.now() - startTime */
+    return Promise.resolve()
+  } catch (error) {
+    /* const loadTime = performance.now() - startTime */
+    throw {
+      code: 'THEME_APPLICATION_FAILED',
+      message: 'Failed to apply theme to document',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now(),
+      // loadTime
+    }
+  }
 }
 
 /**
@@ -139,14 +225,112 @@ export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set, get) => ({
       ...defaultPreferences,
-      setTheme: (theme) =>
-        set((state) => ({ appearance: { ...state.appearance, theme } })),
-      setAccentColor: (color) =>
-        set((state) => ({ appearance: { ...state.appearance, accentColor: color } })),
-      setHighContrast: (enabled) =>
-        set((state) => ({ appearance: { ...state.appearance, highContrast: enabled } })),
-      setFontFamily: (font) =>
-        set((state) => ({ appearance: { ...state.appearance, fontFamily: font } })),
+      setTheme: async (theme) => {
+        const state = get()
+        set({ themeStatus: 'loading' })
+        
+        try {
+          // Use theme registry for named themes, fallback to basic themes
+          if (theme === 'light' || theme === 'dark' || theme === 'system' || theme === 'high-contrast') {
+            await applyThemeToDocument(
+              theme, 
+              state.appearance.accentColor, 
+              state.appearance.highContrast,
+              state.appearance.fontFamily
+            )
+          } else {
+            // Load named theme from registry
+            await themeRegistry.loadTheme(theme)
+
+            // Re-apply user's accent variables after theme CSS loads
+            const html = document.documentElement
+            const rgbValue = hexToRgb(state.appearance.accentColor)
+            if (rgbValue) {
+              html.style.setProperty('--primary', rgbValue)
+              const lighterRgb = createLighterVariant(rgbValue)
+              html.style.setProperty('--primary-light', lighterRgb)
+              html.style.setProperty('--accent-primary', `rgb(${rgbValue})`)
+              html.style.setProperty('--accent-secondary', `rgb(${lighterRgb})`)
+            }
+            // Ensure data-theme base mode matches selected named theme category
+            const def = themeRegistry.getTheme(theme)
+            if (def) {
+              const baseMode = (
+                def.category === 'light' ? 'light' :
+                def.category === 'accessibility' ? 'high-contrast' :
+                'dark'
+              )
+              html.setAttribute('data-theme', baseMode)
+            }
+          }
+          
+          set((state) => ({ 
+            appearance: { ...state.appearance, theme },
+            themeStatus: 'success',
+            lastAppliedTheme: theme,
+            themeLoadTime: performance.now(),
+            lastError: undefined
+          }))
+        } catch (error) {
+          const themeError: ThemeError = {
+            code: 'THEME_SWITCH_FAILED',
+            message: 'Failed to switch theme',
+            details: error instanceof Error ? error.message : 'Unknown error',
+            timestamp: Date.now()
+          }
+          
+          set((state) => ({ 
+            themeStatus: 'error',
+            lastError: themeError,
+            // Keep the old theme if switching failed
+            appearance: { ...state.appearance }
+          }))
+          
+          console.error('Theme switching failed:', themeError)
+        }
+      },
+      setAccentColor: (color) => {
+        const state = get()
+        set((state) => ({ appearance: { ...state.appearance, accentColor: color } }))
+        
+        // Re-apply theme with new accent color
+        applyThemeToDocument(
+          state.appearance.theme, 
+          color, 
+          state.appearance.highContrast,
+          state.appearance.fontFamily
+        ).catch(error => {
+          console.error('Failed to apply accent color:', error)
+        })
+      },
+      setHighContrast: (enabled) => {
+        const state = get()
+        set((state) => ({ appearance: { ...state.appearance, highContrast: enabled } }))
+        
+        // Re-apply theme with new high contrast setting
+        applyThemeToDocument(
+          state.appearance.theme, 
+          state.appearance.accentColor, 
+          enabled,
+          state.appearance.fontFamily
+        ).catch(error => {
+          console.error('Failed to apply high contrast setting:', error)
+        })
+      },
+      setFontFamily: (font) => {
+        const state = get()
+        set((state) => ({ appearance: { ...state.appearance, fontFamily: font } }))
+        
+        // Re-apply theme with new font family
+        applyThemeToDocument(
+          state.appearance.theme, 
+          state.appearance.accentColor, 
+          state.appearance.highContrast,
+          font
+        ).catch(error => {
+          console.error('Failed to apply font family:', error)
+        })
+      },
       setFontSize: (size) =>
         set((state) => ({ appearance: { ...state.appearance, fontSize: size } })),
       setLineSpacing: (spacing) =>
@@ -211,18 +395,92 @@ export const usePreferencesStore = create<PreferencesState>()(
           }))
         }
       },
-      resetToDefaults: () =>
-        set((state) => ({
+      resetToDefaults: () => {
+        set(() => ({
           ...defaultPreferences,
           customAccentColorInput: '', // Also reset custom input
-        })),
+        }))
+        
+        // Re-apply default theme
+        applyThemeToDocument(
+          defaultPreferences.appearance.theme,
+          defaultPreferences.appearance.accentColor,
+          defaultPreferences.appearance.highContrast,
+          defaultPreferences.appearance.fontFamily
+        ).catch(error => {
+          console.error('Failed to apply default theme:', error)
+        })
+      },
+      clearThemeError: () => {
+        set({ lastError: undefined, themeStatus: 'idle' })
+      },
+      retryThemeApplication: async () => {
+        const state = get()
+        if (state.lastAppliedTheme) {
+          await get().setTheme(state.lastAppliedTheme)
+        }
+      }
     }),
     {
       name: 'kanban-diary-preferences',
       version: defaultPreferences.version,
-      // Simple migration for future versions if schema changes
+      // Enhanced migration for future versions if schema changes
       migrate: (persistedState, version) => {
         const oldState = (persistedState || {}) as any
+        
+        // Handle version 1 to 2 migration
+        if (version === 1) {
+          const migratedState = {
+            ...defaultPreferences,
+            ...oldState,
+            version: 2,
+            // Add new fields with defaults
+            themeStatus: 'idle' as ThemeStatus,
+            appearance: {
+              ...defaultPreferences.appearance,
+              ...(oldState.appearance || {}),
+            },
+            layout: {
+              ...defaultPreferences.layout,
+              ...(oldState.layout || {}),
+            },
+            notifications: {
+              ...defaultPreferences.notifications,
+              ...(oldState.notifications || {}),
+              dueReminders: {
+                ...defaultPreferences.notifications.dueReminders,
+                ...(oldState.notifications?.dueReminders || {}),
+              },
+              completion: {
+                ...defaultPreferences.notifications.completion,
+                ...(oldState.notifications?.completion || {}),
+              },
+              quietHours: {
+                ...defaultPreferences.notifications.quietHours,
+                ...(oldState.notifications?.quietHours || {}),
+              },
+            },
+            behavior: {
+              ...defaultPreferences.behavior,
+              ...(oldState.behavior || {}),
+            },
+          }
+          
+          // Apply the migrated theme
+          setTimeout(() => {
+            applyThemeToDocument(
+              migratedState.appearance.theme,
+              migratedState.appearance.accentColor,
+              migratedState.appearance.highContrast,
+              migratedState.appearance.fontFamily
+            ).catch(error => {
+              console.error('Failed to apply migrated theme:', error)
+            })
+          }, 0)
+          
+          return migratedState
+        }
+        
         // Deep-merge with defaults so incomplete nested objects don't wipe required defaults
         const merged: PreferencesState = {
           ...defaultPreferences,
@@ -255,45 +513,13 @@ export const usePreferencesStore = create<PreferencesState>()(
             ...defaultPreferences.behavior,
             ...(oldState.behavior || {}),
           },
-          version: 1,
+          version: 2,
         }
         return merged
       },
     },
   ),
 )
-
-// Helper to apply theme to the document
-export const applyThemeToDocument = (theme: ThemeMode, accentColor: string, highContrast: boolean) => {
-  const html = document.documentElement
-
-  // Remove existing theme attributes to prevent conflicts
-  html.removeAttribute('data-theme')
-  html.style.removeProperty('--primary-rgb')
-  html.style.removeProperty('--font-family-base') // Remove font family style
-
-  if (highContrast) {
-    html.setAttribute('data-theme', 'high-contrast')
-  } else {
-    html.setAttribute('data-theme', theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
-    html.style.setProperty('--primary-rgb', hexToRgb(accentColor) || '99 179 237') // Fallback to default
-  }
-
-  // Set font family
-  const { fontFamily } = usePreferencesStore.getState().appearance
-  let fontStack = ''
-  switch (fontFamily) {
-    case 'serif':
-      fontStack = 'serif'
-      break
-    case 'monospace':
-      fontStack = 'monospace'
-      break
-    default:
-      fontStack = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
-  }
-  html.style.setProperty('--font-family-base', fontStack)
-}
 
 // Basic hex to RGB converter for CSS variables
 function hexToRgb(hex?: string | null): string | null {
@@ -310,3 +536,20 @@ function hexToRgb(hex?: string | null): string | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized)
   return result ? `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` : null
 }
+
+/**
+ * Create a lighter variant of an RGB color
+ */
+function createLighterVariant(rgbString: string): string {
+  const [r, g, b] = rgbString.split(' ').map(Number)
+  
+  // Make the color lighter by increasing each component
+  const lighterR = Math.min(255, Math.round(r + (255 - r) * 0.3))
+  const lighterG = Math.min(255, Math.round(g + (255 - g) * 0.3))
+  const lighterB = Math.min(255, Math.round(b + (255 - b) * 0.3))
+  
+  return `${lighterR} ${lighterG} ${lighterB}`
+}
+
+// Export the enhanced theme application function for external use
+export { applyThemeToDocument }

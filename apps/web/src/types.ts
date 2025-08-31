@@ -25,6 +25,69 @@ export interface TaskItem {
   createdAt: string
   /** ISO timestamp for the last update. */
   updatedAt: string
+  /** Whether the task is archived (soft deleted). */
+  archived?: boolean
+}
+
+/**
+ * Normalized note entity stored in the notes store.
+ */
+export interface NoteItem {
+  /** Unique identifier (prefixed with `note_`). */
+  id: string
+  /** Note title. */
+  title: string
+  /** Rich text content with markdown support. */
+  content: string
+  /** Optional categories for organization. */
+  categories?: string[]
+  /** Optional tags for filtering and grouping. */
+  tags?: string[]
+  /** Optional template type used for this note. */
+  template?: 'daily_journal' | 'meeting_notes' | 'idea' | 'todo' | 'custom'
+  /** Optional linked task IDs. */
+  linkedTasks?: string[]
+  /** Optional linked note IDs. */
+  linkedNotes?: string[]
+  /** ISO timestamp when the note was created. */
+  createdAt: string
+  /** ISO timestamp for the last update. */
+  updatedAt: string
+  /** Whether the note is archived (soft deleted). */
+  archived?: boolean
+  /** Auto-save status indicator. */
+  isSaving?: boolean
+  /** Last auto-save timestamp. */
+  lastSaved?: string
+}
+
+/**
+ * Note filtering options.
+ */
+export interface NoteFilters {
+  categories?: string[]
+  tags?: string[]
+  template?: NoteItem['template']
+  search?: string
+  linkedTask?: string
+  linkedNote?: string
+  showArchived?: boolean
+  dateRange?: {
+    from?: string
+    to?: string
+  }
+}
+
+/**
+ * Note statistics.
+ */
+export interface NoteStats {
+  total: number
+  byCategory: Record<string, number>
+  byTemplate: Record<string, number>
+  archived: number
+  createdThisWeek: number
+  updatedThisWeek: number
 }
 
 /**
@@ -38,6 +101,18 @@ export interface ColumnConfig {
   color: string
   /** Work-in-progress limit for the column. */
   wipLimit: number
+}
+
+/**
+ * Note template configuration.
+ */
+export interface NoteTemplate {
+  id: string
+  name: string
+  description: string
+  content: string
+  category?: string
+  tags?: string[]
 }
 
 
