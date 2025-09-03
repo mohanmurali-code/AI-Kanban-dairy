@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <style>
+      .bg{fill:#0b0c0f}
+      .col{fill:#0f172a;stroke:#1b1f2a}
+      .hdr{fill:#1e293b}
+      .text{fill:#e6e9ef;font:600 14px ui-sans-serif,system-ui}
+      .muted{fill:#9aa3b2;font:500 12px ui-sans-serif,system-ui}
+      .card{fill:#11131a;stroke:#1b1f2a}
+      .chip{fill:#334155;stroke:#3b4a62}
+      .tag{fill:#0b0c0f;stroke:#293042}
+      .due{fill:#0b0c0f;stroke:#233144}
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="720"/>
+  <g transform="translate(24,24)">
+    <!-- Column 1 -->
+    <g>
+      <rect class="col" x="0" y="0" width="220" height="672" rx="10"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="10"/>
+      <text class="text" x="14" y="30">Draft</text>
+      <g transform="translate(12,64)">
+        <rect class="card" x="0" y="0" width="196" height="88" rx="8"/>
+        <text class="text" x="12" y="22">Card with rich meta</text>
+        <g>
+          <rect class="chip" x="12" y="28" width="64" height="18" rx="9"/>
+          <text class="muted" x="44" y="41" text-anchor="middle">Medium</text>
+        </g>
+        <g>
+          <rect class="due" x="84" y="28" width="64" height="18" rx="9"/>
+          <text class="muted" x="116" y="41" text-anchor="middle">Today</text>
+        </g>
+        <g>
+          <rect class="tag" x="12" y="52" width="52" height="18" rx="9"/>
+          <text class="muted" x="38" y="65" text-anchor="middle">UI</text>
+          <rect class="tag" x="68" y="52" width="64" height="18" rx="9"/>
+          <text class="muted" x="100" y="65" text-anchor="middle">kanban</text>
+        </g>
+      </g>
+    </g>
+    <!-- Add 4 more columns (omitted for brevity) -->
+  </g>
+</svg>
+
+

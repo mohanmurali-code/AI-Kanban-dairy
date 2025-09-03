@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kanban UI Mockups</title>
+    <style>
+      :root { --bg:#0b0c0f; --card:#11131a; --muted:#9aa3b2; --fg:#e6e9ef; }
+      body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial; background:#0b0c0f; color:var(--fg); }
+      .wrap { max-width: 1200px; margin: 32px auto; padding: 0 16px; }
+      h1 { font-size: 20px; font-weight: 600; margin: 0 0 16px; }
+      .grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:16px; }
+      .card { background: var(--card); border:1px solid #1b1f2a; border-radius: 12px; overflow: hidden; }
+      .title { display:flex; justify-content: space-between; padding: 12px 14px; border-bottom:1px solid #1b1f2a; }
+      .title a { color:#9dc1ff; text-decoration:none; font-size:12px; }
+      .thumb { display:block; width:100%; height:auto; background:#0b0c0f; }
+      .row { display:flex; gap:8px; padding: 12px 14px; color: var(--muted); font-size: 12px; }
+      .badge { border:1px solid #293042; padding: 2px 6px; border-radius: 999px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Kanban UI Mockups</h1>
+      <div class="grid">
+        <div class="card">
+          <div class="title"><div>Minimal (Clean)</div><a href="kanban-minimal.svg" target="_blank">Open SVG</a></div>
+          <img class="thumb" src="kanban-minimal.svg" alt="Minimal mockup" />
+          <div class="row"><span class="badge">airy</span><span class="badge">subtle borders</span><span class="badge">priority emphasis</span></div>
+        </div>
+        <div class="card">
+          <div class="title"><div>Detailed (Rich Cards)</div><a href="kanban-detailed.svg" target="_blank">Open SVG</a></div>
+          <img class="thumb" src="kanban-detailed.svg" alt="Detailed mockup" />
+          <div class="row"><span class="badge">priority</span><span class="badge">due date</span><span class="badge">tags</span></div>
+        </div>
+        <div class="card">
+          <div class="title"><div>Compact (Dense)</div><a href="kanban-compact.svg" target="_blank">Open SVG</a></div>
+          <img class="thumb" src="kanban-compact.svg" alt="Compact mockup" />
+          <div class="row"><span class="badge">dense</span><span class="badge">small cards</span><span class="badge">max info</span></div>
+        </div>
+        <div class="card">
+          <div class="title"><div>High Contrast (Accessible)</div><a href="kanban-high-contrast.svg" target="_blank">Open SVG</a></div>
+          <img class="thumb" src="kanban-high-contrast.svg" alt="High contrast mockup" />
+          <div class="row"><span class="badge">WCAG</span><span class="badge">strong borders</span><span class="badge">large focus</span></div>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+
+

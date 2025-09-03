@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <style>
+      .bg{fill:#000}
+      .col{fill:#fff;stroke:#000;stroke-width:2px}
+      .hdr{fill:#000;stroke:#000;stroke-width:2px}
+      .text{fill:#000;font:700 16px ui-sans-serif,system-ui}
+      .textInv{fill:#fff;font:700 16px ui-sans-serif,system-ui}
+      .card{fill:#fff;stroke:#000;stroke-width:2px}
+      .focus{fill:none;stroke:#00f;stroke-width:3px;stroke-dasharray:6 4}
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="720"/>
+  <g transform="translate(24,24)">
+    <g>
+      <rect class="col" x="0" y="0" width="220" height="672" rx="6"/>
+      <rect class="hdr" x="0" y="0" width="220" height="48" rx="6"/>
+      <text class="textInv" x="12" y="30">Draft</text>
+      <g transform="translate(12,64)">
+        <rect class="card" x="0" y="0" width="196" height="60" rx="4"/>
+        <text class="text" x="10" y="24">Large contrast card</text>
+        <rect class="focus" x="-4" y="-4" width="204" height="68" rx="6"/>
+      </g>
+    </g>
+    <!-- others omitted -->
+  </g>
+</svg>
+
+
